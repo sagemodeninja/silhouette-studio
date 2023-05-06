@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="container">
+        <div id="properties_section" class="sections">
+            <p class="section-header">Properties</p>
+            <input id="file_input" type="file">
+            <div>
+                <label>Width</label>
+                <fluent-number-field id="width_input" step="0.01" value="1"></fluent-number-field>
+            </div>
+            <div>
+                <label>Height</label>
+                <fluent-number-field id="height_input" step="0.01" value="1"></fluent-number-field>
+            </div>
+            <button id="download_button">Download</button>
+        </div>
+        <div id="preview_section" class="sections">
+            <canvas id="preview_canvas"></canvas>
+        </div>
+    </div>
+</body>
+</html>

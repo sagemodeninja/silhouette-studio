@@ -1,0 +1,33 @@
+body {
+    font-family: "Segoe UI Variable", sans-serif;
+    height: 100vh;
+    margin: 0;
+}
+
+#container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.sections {
+    background-color: var(--fill-color);
+}
+
+#properties_section {
+    width: 350px;
+}
+
+.section-header {
+    color: #fff;
+    font-variation-settings: "wght" 600, "opsz" 36;
+    font-size: 28px;
+}
+
+#preview_section {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 20px;
+}
