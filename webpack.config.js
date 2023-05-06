@@ -40,7 +40,12 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
+        fallback: {
+          stream: require.resolve('stream-browserify'),
+          timers: require.resolve('timers-browserify'),
+          buffer: require.resolve('buffer/'),
+        }
     },
     devServer: {
       static: {

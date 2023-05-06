@@ -8,7 +8,6 @@ export class PropertiesEditor {
     private _properties: Properties;
     private _callback: (properties: Properties) => void;
     
-    private _fileInput: HTMLInputElement;
     private _imageWidthInput: NumberField;
     private _imageHeightInput: NumberField;
 
@@ -18,7 +17,6 @@ export class PropertiesEditor {
             imageHeight: 1
         };
 
-        this._fileInput = document.getElementById('file_input') as HTMLInputElement;
         this._imageWidthInput = document.getElementById('width_input') as NumberField;
         this._imageHeightInput = document.getElementById('height_input') as NumberField;
 
@@ -30,17 +28,33 @@ export class PropertiesEditor {
     }
 
     private addEventListeners() {
-        this._fileInput.addEventListener('change', () => this.onImageChanged());
         this._imageWidthInput.addEventListener('input', () => this.onImageSizeInput());
         this._imageHeightInput.addEventListener('input', () => this.onImageSizeInput());
     }
 
-    private onImageChanged() {
-        const file = this._fileInput.files[0];
+    // private openFile(event: KeyboardEvent) {
+    //     const control = event.ctrlKey || event.metaKey;
+        
+    //     if (!control || event.key !== 'o')
+    //         return;
+        
+    //     event.preventDefault();
+    //     this._fileInput.click();
+    // }
 
-        this._properties.image = URL.createObjectURL(file);
-        this._callback(this._properties);
-    }
+    // private onImageChanged() {
+    //     const file = this._fileInput.files[0];
+    //     const ext = file.name.split('.').pop();
+
+    //     if (ext === 'studio4')
+    //     {
+    //         alert('File type not supported yet!');
+    //         return;
+    //     }
+
+    //     this._properties.image = URL.createObjectURL(file);
+    //     this._callback(this._properties);
+    // }
 
     private onImageSizeInput() {
         this._properties.imageWidth = this._imageWidthInput.valueAsNumber;

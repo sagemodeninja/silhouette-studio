@@ -4,6 +4,7 @@ import '/public/css/app.css';
 
 import { PropertiesEditor } from './properties-editor';
 import { PreviewCanvas } from './preview-canvas';
+import { Project } from './project';
 
 baseLayerLuminance.withDefault(StandardLuminance.DarkMode);
 
@@ -20,8 +21,11 @@ class SilhouetteStudioTool {
     public context: CanvasRenderingContext2D;
     public propertiesSection: HTMLDivElement;
 
+    
+    private _project: Project;
     private _propertiesEditor: PropertiesEditor;
     private _canvas: PreviewCanvas;
+    private _fileInput: HTMLInputElement;
 
     constructor() {
         this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -30,13 +34,43 @@ class SilhouetteStudioTool {
         this._propertiesEditor = new PropertiesEditor();
         this._canvas = new PreviewCanvas();
 
+        // TODO: Refactor
+        this._fileInput = document.createElement('input');
+        this._fileInput.type = 'file';
+        this._fileInput.accept = '.studio4,.jpg,.jpeg,.png';
+
         this.setDesignTokens();
         this.addEventListeners();
     }
 
     addEventListeners() {
+        document.addEventListener('keydown', e => this.onKeyDown(e));
+        this._fileInput.addEventListener('change', () => this.openFile());
         this._propertiesEditor.subscribeNotifications(props => this._canvas.update(props));
         this.downloadButton.addEventListener('click', () => this.saveOutput());
+    }
+
+    onKeyDown(event: KeyboardEvent) {
+        if (!(event.ctrlKey || event.metaKey))
+            return;
+
+        switch(event.key) {
+            case 'o':
+                this._fileInput.click();
+                break;
+            case 's':
+                this._project.save();
+                break;
+            default:
+                return;
+        }
+
+        event.preventDefault();
+    }
+
+    private openFile() {
+        const file = this._fileInput.files[0];
+        this._project = new Project(file);
     }
 
     saveOutput() {
