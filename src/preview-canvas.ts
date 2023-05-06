@@ -8,6 +8,7 @@ const SCREEN_DPI = 96;
 const OUTPUT_DPI = 300;
 
 export class PreviewCanvas {
+    private _source: string;
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D;
 
@@ -19,14 +20,20 @@ export class PreviewCanvas {
         this.clear();
     }
 
+    public setup(source: string) {
+        this._source = source;
+    }
+
     update(properties: Properties) {
+        if (!this._source) return;
+
         this.clear();
 
         const image = new Image();
         const width = properties.imageWidth * SCREEN_DPI;
         const height = properties.imageHeight * SCREEN_DPI;
     
-        image.src = properties.image;
+        image.src = this._source;
         image.onload = () => {
             this._context.drawImage(image, 0, 0, width, height);
         };

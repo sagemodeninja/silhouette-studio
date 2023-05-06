@@ -16,23 +16,19 @@ const A4_HEIGHT_INCHES = 11.693;
 const OUTPUT_DPI = 300;
 
 class SilhouetteStudioTool {
-    public canvas: HTMLCanvasElement;
-    public downloadButton: HTMLButtonElement;
     public context: CanvasRenderingContext2D;
     public propertiesSection: HTMLDivElement;
 
     
     private _project: Project;
     private _propertiesEditor: PropertiesEditor;
-    private _canvas: PreviewCanvas;
+    private _previewCanvas: PreviewCanvas;
     private _fileInput: HTMLInputElement;
 
     constructor() {
-        this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        this.downloadButton = document.getElementById('download_button') as HTMLButtonElement;
-        
+        this._project = new Project();
         this._propertiesEditor = new PropertiesEditor();
-        this._canvas = new PreviewCanvas();
+        this._previewCanvas = new PreviewCanvas();
 
         // TODO: Refactor
         this._fileInput = document.createElement('input');
@@ -45,9 +41,15 @@ class SilhouetteStudioTool {
 
     addEventListeners() {
         document.addEventListener('keydown', e => this.onKeyDown(e));
+        
+        this._project.addEventListener('load', () => {
+            this._propertiesEditor.open(this._project.properties);
+            this._previewCanvas.setup(this._project.source);
+            this._previewCanvas.update(this._project.properties);
+        });
+
+        this._propertiesEditor.subscribeNotifications(props => this._previewCanvas.update(props));
         this._fileInput.addEventListener('change', () => this.openProject());
-        this._propertiesEditor.subscribeNotifications(props => this._canvas.update(props));
-        this.downloadButton.addEventListener('click', () => this.saveOutput());
     }
 
     onKeyDown(event: KeyboardEvent) {
@@ -70,27 +72,26 @@ class SilhouetteStudioTool {
 
     private async openProject() {
         const file = this._fileInput.files[0];
-        this._project = await Project.open(file);
-        console.log(this._project);
+        this._project.open(file);
     }
 
     saveOutput() {
-        const outputCanvas = document.createElement('canvas');
-        const outputContext = outputCanvas.getContext('2d');
-        const outputWidth = Math.round(A4_WIDTH_INCHES * OUTPUT_DPI);
-        const outputHeight = Math.round(A4_HEIGHT_INCHES * OUTPUT_DPI);
+        // const outputCanvas = document.createElement('canvas');
+        // const outputContext = outputCanvas.getContext('2d');
+        // const outputWidth = Math.round(A4_WIDTH_INCHES * OUTPUT_DPI);
+        // const outputHeight = Math.round(A4_HEIGHT_INCHES * OUTPUT_DPI);
 
-        outputCanvas.width = outputWidth;
-        outputCanvas.height = outputHeight;
+        // outputCanvas.width = outputWidth;
+        // outputCanvas.height = outputHeight;
 
-        outputContext.drawImage(this.canvas, 0, 0, outputWidth, outputHeight);
+        // outputContext.drawImage(this.canvas, 0, 0, outputWidth, outputHeight);
         
-        const dataURL = outputCanvas.toDataURL();
-        const downloadLink = document.createElement('a');
+        // const dataURL = outputCanvas.toDataURL();
+        // const downloadLink = document.createElement('a');
 
-        downloadLink.setAttribute('download', 'my-canvas.png');
-        downloadLink.setAttribute('href', dataURL);
-        downloadLink.click();
+        // downloadLink.setAttribute('download', 'my-canvas.png');
+        // downloadLink.setAttribute('href', dataURL);
+        // downloadLink.click();
     }
 
     private setDesignTokens() {

@@ -1,41 +1,77 @@
-import { SourceImage } from './source-image';
-import { Builder } from 'xml2js';
+import { Builder, Parser } from 'xml2js';
 import { saveAs } from 'file-saver';
-import { ProjectParser } from './project-parser';
+import { Properties } from './properties';
 
-export class Project {
+export class Project extends EventTarget {
     public title: string;
-    public source: SourceImage;
+    public source: string;
+    public properties: Properties;
 
     constructor() {
-        this.source = new SourceImage();
-        this.source.data = 'sample';
-        this.source.width = 1.5;
-        this.source.height = 1;
+        super();
     }
 
-    static open(file: File) {
+    public open(file: File) {
         const ext = file.name.split('.').pop();
 
-        switch(ext) {
-            case 'studio4':
-                return ProjectParser.parse(file);
-            default:
-                return this.createProject(file);
+        if(ext != 'studio4')
+        {
+            this.parseImage(file);
+            return;
         }
+
+        this.parseSaveFile(file);
     }
 
-    private static createProject(file: File) {
-        const project = new Project();
+    private parseSaveFile(file: File) {
+        const parser = new Parser({explicitArray: false});
+        const reader = new FileReader();
 
-        project.title = file.name.split('.')[0];
-        project.source = {
-            data: URL.createObjectURL(file),
-            width: 1.5,
-            height: 1.5,
-        };
+        reader.onload = () => {
+            const xml = reader.result;
 
-        return project;
+            parser.parseString(xml, (err, result) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+
+                const root = result.root;
+
+                this.title = root.title;
+                this.source = root.source;
+                this.properties = {
+                    imageWidth: parseFloat(root.properties.imageWidth),
+                    imageHeight: parseFloat(root.properties.imageHeight)
+                }
+
+                this.loaded();
+            });
+        }
+
+        reader.readAsText(file);
+    }
+
+    private parseImage(file: File) {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            this.title = file.name.split('.')[0];
+            this.source = reader.result.toString();
+            this.properties = {
+                imageWidth: 1,
+                imageHeight: 1
+            };
+
+            this.loaded();
+        }
+
+        reader.readAsDataURL(file);
+    }
+
+    private loaded() {
+        const event = new Event('load');
+        this.dispatchEvent(event);
     }
 
     public save() {
@@ -43,6 +79,6 @@ export class Project {
         const xml = builder.buildObject(this);
 
         const file = new Blob([xml], {type: 'text/xml;charset=utf-8'});
-        saveAs(file, 'myFile.studio4');
+        saveAs(file, `${this.title}.studio4`);
     }
 }
