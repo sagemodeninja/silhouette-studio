@@ -45,7 +45,7 @@ class SilhouetteStudioTool {
 
     addEventListeners() {
         document.addEventListener('keydown', e => this.onKeyDown(e));
-        this._fileInput.addEventListener('change', () => this.openFile());
+        this._fileInput.addEventListener('change', () => this.openProject());
         this._propertiesEditor.subscribeNotifications(props => this._canvas.update(props));
         this.downloadButton.addEventListener('click', () => this.saveOutput());
     }
@@ -68,9 +68,10 @@ class SilhouetteStudioTool {
         event.preventDefault();
     }
 
-    private openFile() {
+    private async openProject() {
         const file = this._fileInput.files[0];
-        this._project = new Project(file);
+        this._project = await Project.open(file);
+        console.log(this._project);
     }
 
     saveOutput() {
