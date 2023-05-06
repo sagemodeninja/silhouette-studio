@@ -18,10 +18,6 @@ provideFluentDesignSystem()
         fluentDivider()
     );
 
-const A4_WIDTH_INCHES = 8.268;
-const A4_HEIGHT_INCHES = 11.693;
-const OUTPUT_DPI = 300;
-
 class SilhouetteStudioTool {
     public context: CanvasRenderingContext2D;
     public propertiesSection: HTMLDivElement;

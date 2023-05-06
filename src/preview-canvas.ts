@@ -43,7 +43,25 @@ export class PreviewCanvas {
     
         image.src = this._source;
         image.onload = () => {
-            this._context.drawImage(image, this._workArea.left, this._workArea.top, width, height);
+            const workArea = this._workArea;
+            const columns = Math.floor(workArea.width / width);
+            const rows = Math.floor(workArea.height / height);
+            const horizontalSpace = workArea.width - (columns * width);
+            const verticalSpace = workArea.height - (rows * height);
+            const horizontalSpacing = horizontalSpace / (columns - 1);
+            const verticalSpacing = verticalSpace / (rows - 1);
+            const offsetWidth = width + horizontalSpacing;
+            const offsetHeight = height + verticalSpacing;
+
+            console.log(width, height);
+
+            for(let row=0; row<rows;row++) {
+                const top = workArea.top + (offsetHeight * row);
+                for(let column=0; column<columns;column++) {
+                    const left = workArea.left + (offsetWidth * column);
+                    this._context.drawImage(image, left, top, width, height);
+                }
+            }
         };
     }
 
