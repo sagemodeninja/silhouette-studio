@@ -8,6 +8,7 @@
 </head>
 <body>
     <header>
+        <fluent-button id="file_menu_button" appearance="stealth">File</fluent-button>
         <span>*Untitled</span>
     </header>
     <div id="container">
@@ -24,8 +25,17 @@
                 <label>Height</label>
                 <fluent-number-field id="height_input" step="0.1" value="1"></fluent-number-field>
             </div>
-            <button id="download_button">Download</button>
         </section>
     </div>
+
+    <fluent-anchored-region id="file_menu_region" anchor="file_menu_button" horizontal-positioning-mode="locktodefault" horizontal-viewport-lock="true" horizontal-default-position="center" vertical-positioning-mode="locktodefault" vertical-default-position="bottom">
+        <fluent-menu>
+            <fluent-menu-item>Open</fluent-menu-item>
+            <fluent-divider></fluent-divider>
+            <fluent-menu-item>Save</fluent-menu-item>
+            <fluent-divider></fluent-divider>
+            <fluent-menu-item id="export_menu_item">Export</fluent-menu-item>
+          </fluent-menu>
+    </fluent-anchored-region>
 </body>
 </html>

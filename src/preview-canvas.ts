@@ -1,4 +1,6 @@
+import * as saveAs from 'file-saver';
 import { Properties } from "./properties";
+import { Rectangle } from './rectangle';
 
 const A4_WIDTH_INCHES = 8.268;
 const A4_HEIGHT_INCHES = 11.693;
@@ -11,6 +13,7 @@ export class PreviewCanvas {
     private _source: string;
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D;
+    private _workArea: Rectangle;
 
     constructor() {
         this._canvas = document.getElementById('preview_canvas') as HTMLCanvasElement;
@@ -18,13 +21,18 @@ export class PreviewCanvas {
 
         this.scale();
         this.clear();
+        
+        const cutBorderSize = 0.059 * SCREEN_DPI;
+        const width = this._canvas.width - (cutBorderSize * 2);
+        const height = this._canvas.height - (cutBorderSize * 2);
+        this._workArea = new Rectangle(cutBorderSize, cutBorderSize, width, height);
     }
 
     public setup(source: string) {
         this._source = source;
     }
 
-    update(properties: Properties) {
+    public update(properties: Properties) {
         if (!this._source) return;
 
         this.clear();
@@ -35,8 +43,23 @@ export class PreviewCanvas {
     
         image.src = this._source;
         image.onload = () => {
-            this._context.drawImage(image, 0, 0, width, height);
+            this._context.drawImage(image, this._workArea.left, this._workArea.top, width, height);
         };
+    }
+
+    public export() {
+        const outputCanvas = document.createElement('canvas');
+        const outputContext = outputCanvas.getContext('2d');
+        const outputWidth = Math.round(A4_WIDTH_INCHES * OUTPUT_DPI);
+        const outputHeight = Math.round(A4_HEIGHT_INCHES * OUTPUT_DPI);
+
+        outputCanvas.width = outputWidth;
+        outputCanvas.height = outputHeight;
+
+        outputContext.drawImage(this._canvas, 0, 0, outputWidth, outputHeight);
+        
+        const dataURL = outputCanvas.toDataURL();
+        saveAs(dataURL, `test-out.png`);
     }
 
     private scale() {

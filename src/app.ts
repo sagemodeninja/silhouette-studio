@@ -1,4 +1,4 @@
-import {provideFluentDesignSystem, fluentNumberField, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1} from '@fluentui/web-components';
+import {provideFluentDesignSystem, fluentNumberField, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, AnchoredRegion, MenuItem} from '@fluentui/web-components';
 import '/public/fonts/segoe-ui-variable/segoe-ui-variable.css';
 import '/public/css/app.css';
 
@@ -9,7 +9,14 @@ import { Project } from './project';
 baseLayerLuminance.withDefault(StandardLuminance.DarkMode);
 
 provideFluentDesignSystem()
-    .register(fluentNumberField());
+    .register(
+        fluentNumberField(),
+        fluentButton(),
+        fluentAnchoredRegion(),
+        fluentMenu(), 
+        fluentMenuItem(),
+        fluentDivider()
+    );
 
 const A4_WIDTH_INCHES = 8.268;
 const A4_HEIGHT_INCHES = 11.693;
@@ -24,11 +31,13 @@ class SilhouetteStudioTool {
     private _propertiesEditor: PropertiesEditor;
     private _previewCanvas: PreviewCanvas;
     private _fileInput: HTMLInputElement;
+    private _exportMenuItem: MenuItem;
 
     constructor() {
         this._project = new Project();
         this._propertiesEditor = new PropertiesEditor();
         this._previewCanvas = new PreviewCanvas();
+        this._exportMenuItem = document.getElementById('export_menu_item') as MenuItem;
 
         // TODO: Refactor
         this._fileInput = document.createElement('input');
@@ -50,6 +59,7 @@ class SilhouetteStudioTool {
 
         this._propertiesEditor.subscribeNotifications(props => this._previewCanvas.update(props));
         this._fileInput.addEventListener('change', () => this.openProject());
+        this._exportMenuItem.addEventListener('click', () => this.exportProject());
     }
 
     onKeyDown(event: KeyboardEvent) {
@@ -75,23 +85,8 @@ class SilhouetteStudioTool {
         this._project.open(file);
     }
 
-    saveOutput() {
-        // const outputCanvas = document.createElement('canvas');
-        // const outputContext = outputCanvas.getContext('2d');
-        // const outputWidth = Math.round(A4_WIDTH_INCHES * OUTPUT_DPI);
-        // const outputHeight = Math.round(A4_HEIGHT_INCHES * OUTPUT_DPI);
-
-        // outputCanvas.width = outputWidth;
-        // outputCanvas.height = outputHeight;
-
-        // outputContext.drawImage(this.canvas, 0, 0, outputWidth, outputHeight);
-        
-        // const dataURL = outputCanvas.toDataURL();
-        // const downloadLink = document.createElement('a');
-
-        // downloadLink.setAttribute('download', 'my-canvas.png');
-        // downloadLink.setAttribute('href', dataURL);
-        // downloadLink.click();
+    exportProject() {
+        this._previewCanvas.export();
     }
 
     private setDesignTokens() {

@@ -42,7 +42,8 @@ export class Project extends EventTarget {
                 this.source = root.source;
                 this.properties = {
                     imageWidth: parseFloat(root.properties.imageWidth),
-                    imageHeight: parseFloat(root.properties.imageHeight)
+                    imageHeight: parseFloat(root.properties.imageHeight),
+                    exportResolution: parseFloat(root.properties.exportResolution),
                 }
 
                 this.loaded();
@@ -60,7 +61,8 @@ export class Project extends EventTarget {
             this.source = reader.result.toString();
             this.properties = {
                 imageWidth: 1,
-                imageHeight: 1
+                imageHeight: 1,
+                exportResolution: 300
             };
 
             this.loaded();
