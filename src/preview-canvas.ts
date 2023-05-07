@@ -45,8 +45,8 @@ export class ProjectCanvas {
         const availableWidth = clientWidth - (width * columnCount) + minumumSpace;
         const availableHeight = clientHeight - (height * rowCount);
 
-        const horizontalSpace = availableWidth / (columnCount + 1);
-        const verticalSpace = availableHeight / (rowCount + 1);
+        const horizontalSpace = availableWidth / (columnCount);
+        const verticalSpace = availableHeight / (rowCount);
 
         const offsetWidth = width + horizontalSpace;
         const offsetHeight = height + verticalSpace;

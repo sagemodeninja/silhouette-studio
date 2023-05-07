@@ -1,4 +1,4 @@
-import {provideFluentDesignSystem, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, MenuItem, fluentAccordion, fluentAccordionItem, fluentSelect, fluentOption, neutralLayer3, density, Button, designUnit} from '@fluentui/web-components';
+import {provideFluentDesignSystem, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, MenuItem, fluentAccordion, fluentAccordionItem, fluentSelect, fluentOption, neutralLayer3, density, Button, designUnit, Menu, fluentToolbar, AnchoredRegion} from '@fluentui/web-components';
 import '/public/fonts/segoe-ui-variable/segoe-ui-variable.css';
 import '/public/css/app.css';
 
@@ -17,6 +17,7 @@ provideFluentDesignSystem()
         fluentDivider(),
         fluentAccordion(),
         fluentAccordionItem(),
+        fluentToolbar(),
     );
 
 class SilhouetteStudioTool {
@@ -27,6 +28,8 @@ class SilhouetteStudioTool {
     private _editor: ProjectEditor;
     private _previewCanvas: ProjectCanvas;
     private _fileInput: HTMLInputElement;
+    private _fileMenuButton: Button;
+    private _fileMenu: AnchoredRegion;
     private _exportMenuItem: MenuItem;
 
     constructor() {
@@ -35,6 +38,8 @@ class SilhouetteStudioTool {
         this._project = project;
         this._editor = new ProjectEditor(project);
         this._previewCanvas = new ProjectCanvas(project);
+        this._fileMenuButton = document.getElementById('file_menu_button') as Button;
+        this._fileMenu = document.getElementById('file_menu') as AnchoredRegion;
         this._exportMenuItem = document.getElementById('export_menu_item') as MenuItem;
 
         // TODO: Refactor
@@ -48,8 +53,27 @@ class SilhouetteStudioTool {
 
     addEventListeners() {
         document.addEventListener('keydown', e => this.onKeyDown(e));
+        document.addEventListener('click', () => {
+            this._fileMenu.remove();
+            this._menuVisible = false;
+        });
+        this._fileMenuButton.addEventListener('click', e => this.toggleMenu(e));
         this._editor.addEventListener('change', () => this._previewCanvas.update());
         this._exportMenuItem.addEventListener('click', () => this.exportProject());
+    }
+
+    private _menuVisible: boolean = true;
+    private toggleMenu(event: Event) {
+        this._menuVisible = !this._menuVisible;
+        
+        if (!this._menuVisible)
+        {
+            this._fileMenu.remove();
+            return;
+        }
+        
+        event.stopPropagation();
+        document.body.append(this._fileMenu);
     }
 
     onKeyDown(event: KeyboardEvent) {

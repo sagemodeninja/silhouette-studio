@@ -12,7 +12,9 @@ header,
 }
 
 header {
+    align-items: center;
     border-bottom: solid 1px var(--neutral-stroke-layer-rest);
+    display: flex;
     height: 30px;
     padding: 0 15px;
 }
@@ -67,6 +69,10 @@ header {
 
 .select.medium {
     min-width: min-content;
+}
+
+fluent-anchored-region:has(fluent-menu) {
+    padding-top: 8px;
 }
 
 fluent-menu-item::part(content) {
