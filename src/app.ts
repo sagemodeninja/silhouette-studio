@@ -88,7 +88,7 @@ class SilhouetteStudioTool {
 
         fillColor.setValueFor(header, neutralLayer1);
         fillColor.setValueFor(propertiesSection, neutralLayer2);
-        fillColor.setValueFor(previewSection, neutralLayer1);
+        fillColor.setValueFor(previewSection, neutralLayer2);
     }
 }
 

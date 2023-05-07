@@ -3,12 +3,9 @@ import { Rectangle } from './rectangle';
 import { Project } from './project';
 import * as papers from './data/papers.json';
 
-const A4_WIDTH_INCHES = 8.268;
-const A4_HEIGHT_INCHES = 11.693;
 const A4_ASPECT_RATIO = 1.414; // ISO 216
 const ZOOM_FACTOR = 0.5;
 const CSS_DPI = 96;
-const OUTPUT_DPI = 300;
 const MM_IN_INCHES = 25.4;
 
 export class ProjectCanvas {
@@ -62,16 +59,6 @@ export class ProjectCanvas {
     }
 
     public export() {
-        // const outputCanvas = document.createElement('canvas');
-        // const outputContext = outputCanvas.getContext('2d');
-        // const outputWidth = Math.round(A4_WIDTH_INCHES * OUTPUT_DPI);
-        // const outputHeight = Math.round(A4_HEIGHT_INCHES * OUTPUT_DPI);
-
-        // outputCanvas.width = outputWidth;
-        // outputCanvas.height = outputHeight;
-
-        // outputContext.drawImage(, 0, 0, outputWidth, outputHeight);
-        
         const dataURL = this._canvas.toDataURL();
         saveAs(dataURL, `test-out.png`);
     }
@@ -90,7 +77,6 @@ export class ProjectCanvas {
         const container = this._canvas.parentElement as HTMLDivElement;
         const containerWidth = container.getBoundingClientRect().width;
         
-        const ratio = window.devicePixelRatio;
         const pageSetup = this._project.pageSetup;
         const paper = Array.from(papers).find(p => p.id == pageSetup.size);
         const size = paper.metric;
@@ -100,12 +86,10 @@ export class ProjectCanvas {
         const renderWidth = Math.round(pageSetup.pixelPerInch * size.width / MM_IN_INCHES);
         const renderHeight = Math.round(pageSetup.pixelPerInch * size.height / MM_IN_INCHES);
 
-        this._canvas.width = renderWidth * ratio;
-        this._canvas.height = renderHeight * ratio;
+        this._canvas.width = renderWidth;
+        this._canvas.height = renderHeight;
         this._canvas.style.width = canvasWidth + 'px';
         this._canvas.style.height = canvasHeight + 'px';
-
-        this._context.scale(ratio, ratio);
     }
 
     private clear() {
