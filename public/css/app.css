@@ -12,6 +12,7 @@ header,
 }
 
 header {
+    border-bottom: solid 1px var(--neutral-stroke-layer-rest);
     height: 30px;
     padding: 0 15px;
 }

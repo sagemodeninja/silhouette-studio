@@ -23,7 +23,6 @@ class SilhouetteStudioTool {
     public context: CanvasRenderingContext2D;
     public propertiesSection: HTMLDivElement;
 
-    
     private _project: Project;
     private _editor: ProjectEditor;
     private _previewCanvas: ProjectCanvas;
@@ -50,7 +49,6 @@ class SilhouetteStudioTool {
     addEventListeners() {
         document.addEventListener('keydown', e => this.onKeyDown(e));
         this._editor.addEventListener('change', () => this._previewCanvas.update());
-        this._fileInput.addEventListener('change', () => this.openProject());
         this._exportMenuItem.addEventListener('click', () => this.exportProject());
     }
 
@@ -63,7 +61,7 @@ class SilhouetteStudioTool {
 
             switch(event.key) {
                 case 'o':
-                    this._fileInput.click();
+                    this.openProject();
                     break;
                 case 's':
                     this._project.save();
@@ -73,8 +71,28 @@ class SilhouetteStudioTool {
     }
 
     private async openProject() {
-        const file = this._fileInput.files[0];
-        this._project.open(file);
+        const options = {
+            types: [
+                {
+                    description: 'Silhouette Studio Tool Project',
+                    accept: {
+                        'application/octet-stream': ['.studio4']
+                    }
+                },
+                {
+                    description: 'Images',
+                    accept: {
+                        'image/jpeg': ['.jpeg', '.jpg'],
+                        'image/png': ['.png']
+                    },
+                },
+            ],
+            excludeAcceptAllOption: true,
+            multiple: false,
+        };
+        
+        const fileHandle = await window.showOpenFilePicker(options);
+        this._project.open(fileHandle);
     }
 
     exportProject() {
@@ -95,3 +113,8 @@ class SilhouetteStudioTool {
 document.addEventListener('DOMContentLoaded', () => {
     new SilhouetteStudioTool();
 });
+
+declare const window: Window &
+typeof globalThis & {
+    showOpenFilePicker: any
+}

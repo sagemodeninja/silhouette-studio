@@ -5,7 +5,6 @@ import * as papers from './data/papers.json';
 
 const A4_ASPECT_RATIO = 1.414; // ISO 216
 const ZOOM_FACTOR = 0.5;
-const CSS_DPI = 96;
 const MM_IN_INCHES = 25.4;
 
 export class ProjectCanvas {
@@ -28,30 +27,39 @@ export class ProjectCanvas {
 
         this.clear();
 
+        const workArea = this._workArea;
         const properties = this._project.properties;
         const pageSetup = this._project.pageSetup;
+        
         const image = new Image();
+
+        const clientWidth = workArea.width;
+        const clientHeight = workArea.height;
         const width = Math.round(properties.imageWidth * pageSetup.pixelPerInch);
         const height = Math.round(properties.imageHeight * pageSetup.pixelPerInch);
 
-        console.log(width, height);
+        const minumumSpace = 0.1 * pageSetup.pixelPerInch;
+        const columnCount = Math.floor(clientWidth / (width + minumumSpace));
+        const rowCount = Math.floor(clientHeight / (height + minumumSpace));
+        
+        const availableWidth = clientWidth - (width * columnCount) + minumumSpace;
+        const availableHeight = clientHeight - (height * rowCount);
+
+        const horizontalSpace = availableWidth / (columnCount + 1);
+        const verticalSpace = availableHeight / (rowCount + 1);
+
+        const offsetWidth = width + horizontalSpace;
+        const offsetHeight = height + verticalSpace;
+        const offsetTop = horizontalSpace / 2;
+        const offsetLeft = verticalSpace / 2;
     
         image.src = this._project.source;
         image.onload = () => {
-            const workArea = this._workArea;
-            const columns = Math.floor(workArea.width / width);
-            const rows = Math.floor(workArea.height / height);
-            const horizontalSpace = workArea.width - (columns * width);
-            const verticalSpace = workArea.height - (rows * height);
-            const horizontalSpacing = horizontalSpace / (columns - 1);
-            const verticalSpacing = verticalSpace / (rows - 1);
-            const offsetWidth = width + horizontalSpacing;
-            const offsetHeight = height + verticalSpacing;
 
-            for(let row=0; row<rows;row++) {
-                const top = workArea.top + (offsetHeight * row);
-                for(let column=0; column<columns;column++) {
-                    const left = workArea.left + (offsetWidth * column);
+            for(let row=0; row<rowCount; row++) {
+                const top = workArea.top + offsetTop + (offsetHeight * row);
+                for(let column=0; column<columnCount; column++) {
+                    const left = workArea.left + offsetLeft + (offsetWidth * column);
                     this._context.drawImage(image, left, top, width, height);
                 }
             }

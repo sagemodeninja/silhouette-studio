@@ -1,13 +1,14 @@
 import {
     NumberField, 
     Select,
+    fluentCheckbox,
     fluentNumberField, 
     fluentOption, 
     fluentSelect, 
     provideFluentDesignSystem
 } from '@fluentui/web-components';
 import { Project } from './project';
-import { ListboxOption } from '@microsoft/fast-foundation';
+import { Checkbox, ListboxOption } from '@microsoft/fast-foundation';
 import * as papers from './data/papers.json';
 
 provideFluentDesignSystem()
@@ -15,6 +16,7 @@ provideFluentDesignSystem()
         fluentNumberField(),
         fluentSelect(),
         fluentOption(),
+        fluentCheckbox()
     );
 
 export class ProjectEditor extends EventTarget {
@@ -25,6 +27,7 @@ export class ProjectEditor extends EventTarget {
     private _pageSizeSelect: Select;
     private _pageOrientationSelect: Select;
     private _resolutionInput: NumberField;
+    private _showCutBorderCheck: Checkbox;
 
     constructor(project: Project) {
         super();
@@ -35,6 +38,7 @@ export class ProjectEditor extends EventTarget {
         this._pageSizeSelect = document.getElementById('page_size_select') as Select;
         this._pageOrientationSelect = document.getElementById('page_orientation_select') as Select;
         this._resolutionInput = document.getElementById('resolution_input') as NumberField;
+        this._showCutBorderCheck = document.getElementById('cut_border_check') as Checkbox;
 
         this.setup();
         this.addEventListeners();
@@ -58,6 +62,7 @@ export class ProjectEditor extends EventTarget {
         this._pageSizeSelect.addEventListener('change', () => this.onChange());
         this._pageOrientationSelect.addEventListener('change', () => this.onChange());
         this._resolutionInput.addEventListener('input', () => this.onChange());
+        this._showCutBorderCheck.addEventListener('change', () => this.onChange());
     }
 
     private loadProject() {
@@ -80,6 +85,7 @@ export class ProjectEditor extends EventTarget {
         
         this._project.properties.imageWidth = this._imageWidthInput.valueAsNumber;
         this._project.properties.imageHeight = this._imageHeightInput.valueAsNumber;
+        this._project.properties.showCutBorder = this._showCutBorderCheck.checked;
         this._project.pageSetup.size = this._pageSizeSelect.value;
         this._project.pageSetup.orientation = parseInt(this._pageOrientationSelect.value);
         this._project.pageSetup.pixelPerInch = this._resolutionInput.valueAsNumber;
