@@ -11,7 +11,7 @@ export class Project extends EventTarget {
     /**
      * Configurations for the working page or area.
      */
-    public pageSetup: PageSetup;
+    public pageSetup: PageSetup = new PageSetup();
 
     constructor() {
         super();

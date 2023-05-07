@@ -23,11 +23,11 @@
                     <div class="input-group">
                         <div class="input-group">
                             <label>W:</label>
-                            <fluent-number-field id="width_input" step="0.1" value="1.00" min="0.01" class="size-inputs"></fluent-number-field>
+                            <fluent-number-field id="width_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
                         </div>
                         <div class="input-group">
                             <label>H:</label>
-                            <fluent-number-field id="height_input" step="0.1" value="1.00" min="0.01" class="size-inputs"></fluent-number-field>
+                            <fluent-number-field id="height_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
                         </div>
                         <label>in</label>
                     </div>
@@ -36,16 +36,27 @@
                 <fluent-accordion-item expanded>
                   <span slot="heading">Page Setup</span>
                   <div class="properties-panel">
-                    <div class="input-group">
-                        <label>Size:</label>
-                        <fluent-select id="page_size_select" class="select medium"></fluent-select>
+                    <div class="input-group grid">
+                        <label>Size</label>
+                        <div>
+                            <fluent-select id="page_size_select" class="select medium"></fluent-select>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Orientation:</label>
-                        <fluent-select id="page_orientation_select" class="select medium">
-                            <fluent-option value="0">Portrait</fluent-option>
-                            <fluent-option value="1">Landscape</fluent-option>
-                        </fluent-select>
+                    <div class="input-group grid">
+                        <label>Orientation</label>
+                        <div>
+                            <fluent-select id="page_orientation_select" class="select medium">
+                                <fluent-option value="0">Portrait</fluent-option>
+                                <fluent-option value="1">Landscape</fluent-option>
+                            </fluent-select>
+                        </div>
+                    </div>
+                    <div class="input-group grid">
+                        <label>Print Resolution</label>
+                        <div class="input-group">
+                            <fluent-number-field id="resolution_input" step="100" value="300" min="72" class="input small"></fluent-number-field>
+                            <label>dpi</label>
+                        </div>
                     </div>
                   </div>
                 </fluent-accordion-itemexpanded>

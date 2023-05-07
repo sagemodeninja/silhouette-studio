@@ -18,7 +18,7 @@ export class PageSetup {
      * 
      * @defaultValue `PageOrientation.Portrait`
      */
-    orientation: PageOrientation;
+    orientation: PageOrientation = PageOrientation.Portrait;
 
     /**
      * Resolution of the canvas.

@@ -1,13 +1,15 @@
 import * as saveAs from 'file-saver';
 import { Rectangle } from './rectangle';
 import { Project } from './project';
+import * as papers from './data/papers.json';
 
 const A4_WIDTH_INCHES = 8.268;
 const A4_HEIGHT_INCHES = 11.693;
 const A4_ASPECT_RATIO = 1.414; // ISO 216
 const ZOOM_FACTOR = 0.5;
-const SCREEN_DPI = 96;
+const CSS_DPI = 96;
 const OUTPUT_DPI = 300;
+const MM_IN_INCHES = 25.4;
 
 export class ProjectCanvas {
     private _project: Project;
@@ -30,9 +32,12 @@ export class ProjectCanvas {
         this.clear();
 
         const properties = this._project.properties;
+        const pageSetup = this._project.pageSetup;
         const image = new Image();
-        const width = properties.imageWidth * SCREEN_DPI;
-        const height = properties.imageHeight * SCREEN_DPI;
+        const width = Math.round(properties.imageWidth * pageSetup.pixelPerInch);
+        const height = Math.round(properties.imageHeight * pageSetup.pixelPerInch);
+
+        console.log(width, height);
     
         image.src = this._project.source;
         image.onload = () => {
@@ -46,8 +51,6 @@ export class ProjectCanvas {
             const offsetWidth = width + horizontalSpacing;
             const offsetHeight = height + verticalSpacing;
 
-            console.log(width, height);
-
             for(let row=0; row<rows;row++) {
                 const top = workArea.top + (offsetHeight * row);
                 for(let column=0; column<columns;column++) {
@@ -59,28 +62,24 @@ export class ProjectCanvas {
     }
 
     public export() {
-        const outputCanvas = document.createElement('canvas');
-        const outputContext = outputCanvas.getContext('2d');
-        const outputWidth = Math.round(A4_WIDTH_INCHES * OUTPUT_DPI);
-        const outputHeight = Math.round(A4_HEIGHT_INCHES * OUTPUT_DPI);
+        // const outputCanvas = document.createElement('canvas');
+        // const outputContext = outputCanvas.getContext('2d');
+        // const outputWidth = Math.round(A4_WIDTH_INCHES * OUTPUT_DPI);
+        // const outputHeight = Math.round(A4_HEIGHT_INCHES * OUTPUT_DPI);
 
-        outputCanvas.width = outputWidth;
-        outputCanvas.height = outputHeight;
+        // outputCanvas.width = outputWidth;
+        // outputCanvas.height = outputHeight;
 
-        outputContext.drawImage(this._canvas, 0, 0, outputWidth, outputHeight);
+        // outputContext.drawImage(, 0, 0, outputWidth, outputHeight);
         
-        const dataURL = outputCanvas.toDataURL();
+        const dataURL = this._canvas.toDataURL();
         saveAs(dataURL, `test-out.png`);
     }
 
     private setup() {
         this.scale();
         this.clear();
-
-        const cutBorderSize = 0.059 * SCREEN_DPI;
-        const width = this._canvas.width - (cutBorderSize * 2);
-        const height = this._canvas.height - (cutBorderSize * 2);
-        this._workArea = new Rectangle(cutBorderSize, cutBorderSize, width, height);
+        this.calculateWorkArea();
     }
 
     private addEventListeners() {
@@ -90,12 +89,19 @@ export class ProjectCanvas {
     private scale() {
         const container = this._canvas.parentElement as HTMLDivElement;
         const containerWidth = container.getBoundingClientRect().width;
+        
+        const ratio = window.devicePixelRatio;
+        const pageSetup = this._project.pageSetup;
+        const paper = Array.from(papers).find(p => p.id == pageSetup.size);
+        const size = paper.metric;
+
         const canvasWidth = Math.round(containerWidth * ZOOM_FACTOR);
         const canvasHeight = Math.round(canvasWidth * A4_ASPECT_RATIO);
-        const ratio = window.devicePixelRatio;
+        const renderWidth = Math.round(pageSetup.pixelPerInch * size.width / MM_IN_INCHES);
+        const renderHeight = Math.round(pageSetup.pixelPerInch * size.height / MM_IN_INCHES);
 
-        this._canvas.width = canvasWidth * ratio;
-        this._canvas.height = canvasHeight * ratio;
+        this._canvas.width = renderWidth * ratio;
+        this._canvas.height = renderHeight * ratio;
         this._canvas.style.width = canvasWidth + 'px';
         this._canvas.style.height = canvasHeight + 'px';
 
@@ -106,5 +112,13 @@ export class ProjectCanvas {
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
         this._context.fillStyle = '#fff';
         this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+    }
+
+    private calculateWorkArea() {
+        const resolution = this._project.pageSetup.pixelPerInch;
+        const cutBorderSize = 0.059 * resolution;
+        const width = this._canvas.width - (cutBorderSize * 2);
+        const height = this._canvas.height - (cutBorderSize * 2);
+        this._workArea = new Rectangle(cutBorderSize, cutBorderSize, width, height);
     }
 }

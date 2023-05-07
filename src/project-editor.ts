@@ -23,6 +23,8 @@ export class ProjectEditor extends EventTarget {
     private _imageWidthInput: NumberField;
     private _imageHeightInput: NumberField;
     private _pageSizeSelect: Select;
+    private _pageOrientationSelect: Select;
+    private _resolutionInput: NumberField;
 
     constructor(project: Project) {
         super();
@@ -31,6 +33,8 @@ export class ProjectEditor extends EventTarget {
         this._imageWidthInput = document.getElementById('width_input') as NumberField;
         this._imageHeightInput = document.getElementById('height_input') as NumberField;
         this._pageSizeSelect = document.getElementById('page_size_select') as Select;
+        this._pageOrientationSelect = document.getElementById('page_orientation_select') as Select;
+        this._resolutionInput = document.getElementById('resolution_input') as NumberField;
 
         this.setup();
         this.addEventListeners();
@@ -38,7 +42,7 @@ export class ProjectEditor extends EventTarget {
 
     private setup() {
         const options = Array.from(papers).reduce((options, paper) => {
-            const text = `${paper.id} (${paper.in.width} x ${paper.in.height} in)`;
+            const text = `${paper.id} (${paper.imperial.width} x ${paper.imperial.height} in)`;
             
             options.push(new ListboxOption(text, paper.id));
             return options;
@@ -52,6 +56,8 @@ export class ProjectEditor extends EventTarget {
         this._imageWidthInput.addEventListener('input', () => this.onChange());
         this._imageHeightInput.addEventListener('input', () => this.onChange());
         this._pageSizeSelect.addEventListener('change', () => this.onChange());
+        this._pageOrientationSelect.addEventListener('change', () => this.onChange());
+        this._resolutionInput.addEventListener('input', () => this.onChange());
     }
 
     private loadProject() {
@@ -63,6 +69,8 @@ export class ProjectEditor extends EventTarget {
         this._imageWidthInput.valueAsNumber = properties.imageWidth;
         this._imageHeightInput.valueAsNumber = properties.imageHeight;
         this._pageSizeSelect.value = pageSetup.size;
+        this._pageOrientationSelect.value = pageSetup.orientation.toString();
+        this._resolutionInput.valueAsNumber = pageSetup.pixelPerInch;
         
         this._loaded = true;
     }
@@ -73,6 +81,8 @@ export class ProjectEditor extends EventTarget {
         this._project.properties.imageWidth = this._imageWidthInput.valueAsNumber;
         this._project.properties.imageHeight = this._imageHeightInput.valueAsNumber;
         this._project.pageSetup.size = this._pageSizeSelect.value;
+        this._project.pageSetup.orientation = parseInt(this._pageOrientationSelect.value);
+        this._project.pageSetup.pixelPerInch = this._resolutionInput.valueAsNumber;
 
         const changeEvent = new Event('change');
         this.dispatchEvent(changeEvent);
