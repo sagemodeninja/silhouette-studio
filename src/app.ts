@@ -1,4 +1,4 @@
-import {provideFluentDesignSystem, fluentNumberField, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, AnchoredRegion, MenuItem} from '@fluentui/web-components';
+import {provideFluentDesignSystem, fluentNumberField, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, AnchoredRegion, MenuItem, neutralLayer3} from '@fluentui/web-components';
 import '/public/fonts/segoe-ui-variable/segoe-ui-variable.css';
 import '/public/css/app.css';
 
@@ -59,21 +59,33 @@ class SilhouetteStudioTool {
     }
 
     onKeyDown(event: KeyboardEvent) {
-        if (!(event.ctrlKey || event.metaKey))
-            return;
+        const control = event.ctrlKey || event.metaKey;
 
-        switch(event.key) {
-            case 'o':
-                this._fileInput.click();
-                break;
-            case 's':
-                this._project.save();
-                break;
-            default:
-                return;
+        const isMacOrIOS = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform); 
+        const shift = 
+        
+        if (control && event.shiftKey && event.code == 'KeyO')
+        {
+            event.preventDefault();
+            console.log(1);
         }
 
-        event.preventDefault();
+        if ((event.ctrlKey || event.metaKey) && (event.key == 'o' || event.key == 's'))
+        {
+            event.preventDefault();
+            event.stopPropagation();
+
+            console.log('!');
+
+            switch(event.key) {
+                case 'o':
+                    this._fileInput.click();
+                    break;
+                case 's':
+                    this._project.save();
+                    break;
+            }
+        }
     }
 
     private async openProject() {
@@ -86,11 +98,13 @@ class SilhouetteStudioTool {
     }
 
     private setDesignTokens() {
+        const header = document.getElementsByTagName('header')[0];
         const propertiesSection = document.getElementById('properties_section') as HTMLDivElement;
         const previewSection = document.getElementById('preview_section') as HTMLDivElement;
 
-        fillColor.setValueFor(propertiesSection, neutralLayer1);
-        fillColor.setValueFor(previewSection, neutralLayer2);
+        fillColor.setValueFor(header, neutralLayer1);
+        fillColor.setValueFor(propertiesSection, neutralLayer2);
+        fillColor.setValueFor(previewSection, neutralLayer1);
     }
 }
 

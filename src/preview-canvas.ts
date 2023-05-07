@@ -82,7 +82,8 @@ export class PreviewCanvas {
 
     private scale() {
         const container = this._canvas.parentElement as HTMLDivElement;
-        const canvasWidth = Math.round(container.offsetWidth * ZOOM_FACTOR);
+        const containerWidth = container.getBoundingClientRect().width;
+        const canvasWidth = Math.round(containerWidth * ZOOM_FACTOR);
         const canvasHeight = Math.round(canvasWidth * A4_ASPECT_RATIO);
         const ratio = window.devicePixelRatio;
 

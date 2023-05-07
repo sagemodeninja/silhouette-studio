@@ -1,7 +1,7 @@
 body {
     display: flex;
     flex-direction: column;
-    font-family: 'Segoe UI Variable', sans-serif;
+    font-family: 'Segoe UI Variable';
     height: 100vh;
     margin: 0;
 }
@@ -11,9 +11,14 @@ header,
     background-color: var(--fill-color);
 }
 
+header {
+    height: 30px;
+    padding: 0 15px;
+}
+
 #container {
     display: flex;
-    flex-grow: 1;
+    height: calc(100% - 30px);
 }
 
 #preview_section {
@@ -27,11 +32,29 @@ header,
 }
 
 #properties_section {
+    padding: 0 20px;
     width: 350px;
 }
 
 .section-header {
     color: #fff;
-    font-variation-settings: 'wght' 600, 'opsz' 36;
-    font-size: 28px;
+    font-variation-settings: 'wght' 400, 'opsz' 24;
+    font-size: 18px;
+    line-height: 0;
+}
+
+.input-group {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+.input-group label {
+    color: #fff;
+    font-variation-settings: 'wght' 400, 'opsz' 20;
+    font-size: 14px;
+}
+
+.size-inputs {
+    width: 80px;
 }
