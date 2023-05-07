@@ -4,6 +4,7 @@
 		"module": "ES2015",
 		"outDir": "dist",
 		"moduleResolution": "node",
+		"resolveJsonModule": true,
 	},
 	"include": ["src/**/*"]
 }

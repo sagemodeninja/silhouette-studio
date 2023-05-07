@@ -36,10 +36,9 @@ header {
     width: 350px;
 }
 
-/* #properties_section
-fluent-accordion {
-    width: 100%;
-} */
+.properties-panel {
+    padding: 15px 10px;
+}
 
 .input-group {
     align-items: center;
@@ -55,4 +54,8 @@ fluent-accordion {
 
 .size-inputs {
     width: 80px;
+}
+
+.select.medium {
+    min-width: min-content;
 }

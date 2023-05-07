@@ -43,14 +43,21 @@ export class Project extends EventTarget {
                 }
 
                 const root = result.root;
+                const properties = root.properties;
+                const pageSetup = root.pageSetup;
 
                 this.title = root.title;
                 this.source = root.source;
                 this.properties = {
-                    imageWidth: parseFloat(root.properties.imageWidth),
-                    imageHeight: parseFloat(root.properties.imageHeight),
-                    exportResolution: parseFloat(root.properties.exportResolution),
-                }
+                    imageWidth: parseFloat(properties.imageWidth),
+                    imageHeight: parseFloat(properties.imageHeight),
+                    exportResolution: parseFloat(properties.exportResolution),
+                };
+                this.pageSetup = {
+                    size: pageSetup.size,
+                    orientation: parseInt(pageSetup.orientation),
+                    pixelPerInch: parseInt(pageSetup.pixelPerInch)
+                };
 
                 this.loaded();
             });
@@ -70,6 +77,7 @@ export class Project extends EventTarget {
                 imageHeight: 1,
                 exportResolution: 300
             };
+            this.pageSetup = new PageSetup();
 
             this.loaded();
         }
