@@ -1,4 +1,4 @@
-import {provideFluentDesignSystem, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, MenuItem, fluentAccordion, fluentAccordionItem, fluentSelect, fluentOption} from '@fluentui/web-components';
+import {provideFluentDesignSystem, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, MenuItem, fluentAccordion, fluentAccordionItem, fluentSelect, fluentOption, neutralLayer3, density, Button, designUnit} from '@fluentui/web-components';
 import '/public/fonts/segoe-ui-variable/segoe-ui-variable.css';
 import '/public/css/app.css';
 
@@ -103,9 +103,11 @@ class SilhouetteStudioTool {
         const header = document.getElementsByTagName('header')[0];
         const propertiesSection = document.getElementById('properties_section') as HTMLDivElement;
         const previewSection = document.getElementById('preview_section') as HTMLDivElement;
+        const fileButton = document.getElementById('file_menu_button') as Button;
 
+        designUnit.setValueFor(fileButton, 2.5);
         fillColor.setValueFor(header, neutralLayer1);
-        fillColor.setValueFor(propertiesSection, neutralLayer2);
+        fillColor.setValueFor(propertiesSection, neutralLayer3);
         fillColor.setValueFor(previewSection, neutralLayer2);
     }
 }

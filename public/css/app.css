@@ -31,6 +31,7 @@ header {
 }
 
 #properties_section {
+    border-left: solid 1px var(--neutral-stroke-layer-rest);
     padding: 20px;
     width: 350px;
 }
@@ -66,4 +67,12 @@ header {
 
 .select.medium {
     min-width: min-content;
+}
+
+fluent-menu-item::part(content) {
+    padding-right: 15px;
+}
+
+kbd {
+    font-family: var(--body-font);
 }

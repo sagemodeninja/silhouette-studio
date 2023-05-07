@@ -70,14 +70,21 @@
         </section>
     </div>
 
-    <fluent-anchored-region id="file_menu_region" anchor="file_menu_button" horizontal-positioning-mode="locktodefault" horizontal-viewport-lock="true" horizontal-default-position="center" vertical-positioning-mode="locktodefault" vertical-default-position="bottom">
+    <fluent-anchored-region
+        id="file_menu_region"
+        anchor="file_menu_button"
+        horizontal-positioning-mode="dynamic"
+        horizontal-default-position="right"
+        horizontal-inset="true"
+        vertical-positioning-mode="dynamic"
+        vertical-default-position="bottom">
         <fluent-menu>
-            <fluent-menu-item>Open</fluent-menu-item>
+            <fluent-menu-item>Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
             <fluent-divider></fluent-divider>
-            <fluent-menu-item>Save</fluent-menu-item>
+            <fluent-menu-item>Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
             <fluent-divider></fluent-divider>
-            <fluent-menu-item id="export_menu_item">Export</fluent-menu-item>
-          </fluent-menu>
+            <fluent-menu-item id="export_menu_item">Export to Image <kbd slot="end">Ctrl+Shift+E</kbd></fluent-menu-item>
+        </fluent-menu>
     </fluent-anchored-region>
 </body>
 </html>
