@@ -1,6 +1,6 @@
 import * as saveAs from 'file-saver';
-import { Properties } from "./properties";
 import { Rectangle } from './rectangle';
+import { Project } from './project';
 
 const A4_WIDTH_INCHES = 8.268;
 const A4_HEIGHT_INCHES = 11.693;
@@ -9,39 +9,32 @@ const ZOOM_FACTOR = 0.5;
 const SCREEN_DPI = 96;
 const OUTPUT_DPI = 300;
 
-export class PreviewCanvas {
-    private _source: string;
+export class ProjectCanvas {
+    private _project: Project;
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D;
     private _workArea: Rectangle;
 
-    constructor() {
+    constructor(project: Project) {
+        this._project = project;
         this._canvas = document.getElementById('preview_canvas') as HTMLCanvasElement;
         this._context = this._canvas.getContext('2d');
 
-        this.scale();
-        this.clear();
-        
-        const cutBorderSize = 0.059 * SCREEN_DPI;
-        const width = this._canvas.width - (cutBorderSize * 2);
-        const height = this._canvas.height - (cutBorderSize * 2);
-        this._workArea = new Rectangle(cutBorderSize, cutBorderSize, width, height);
+        this.setup();
+        this.addEventListeners();
     }
 
-    public setup(source: string) {
-        this._source = source;
-    }
-
-    public update(properties: Properties) {
-        if (!this._source) return;
+    public update() {
+        if (!this._project) return;
 
         this.clear();
 
+        const properties = this._project.properties;
         const image = new Image();
         const width = properties.imageWidth * SCREEN_DPI;
         const height = properties.imageHeight * SCREEN_DPI;
     
-        image.src = this._source;
+        image.src = this._project.source;
         image.onload = () => {
             const workArea = this._workArea;
             const columns = Math.floor(workArea.width / width);
@@ -78,6 +71,20 @@ export class PreviewCanvas {
         
         const dataURL = outputCanvas.toDataURL();
         saveAs(dataURL, `test-out.png`);
+    }
+
+    private setup() {
+        this.scale();
+        this.clear();
+
+        const cutBorderSize = 0.059 * SCREEN_DPI;
+        const width = this._canvas.width - (cutBorderSize * 2);
+        const height = this._canvas.height - (cutBorderSize * 2);
+        this._workArea = new Rectangle(cutBorderSize, cutBorderSize, width, height);
+    }
+
+    private addEventListeners() {
+        this._project.addEventListener('load', () => this.update());
     }
 
     private scale() {

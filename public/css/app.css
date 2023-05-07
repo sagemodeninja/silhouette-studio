@@ -32,16 +32,14 @@ header {
 }
 
 #properties_section {
-    padding: 0 20px;
+    padding: 20px;
     width: 350px;
 }
 
-.section-header {
-    color: #fff;
-    font-variation-settings: 'wght' 400, 'opsz' 24;
-    font-size: 18px;
-    line-height: 0;
-}
+/* #properties_section
+fluent-accordion {
+    width: 100%;
+} */
 
 .input-group {
     align-items: center;

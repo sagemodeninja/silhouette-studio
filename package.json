@@ -4,8 +4,7 @@
   "description": "Utility for Silhouette Studio",
   "scripts": {
     "build": "webpack",
-    "watch": "webpack --watch",
-    "start": "webpack-dev-server"
+    "start": "webpack serve"
   },
   "author": "Gary Antier <contact@garyantier.com> (https://garyantier.com)",
   "license": "MIT",
@@ -24,6 +23,7 @@
     "webpack-dev-server": "^4.13.3"
   },
   "dependencies": {
+    "@microsoft/fast-foundation": "^2.49.0",
     "@types/file-saver": "^2.0.5",
     "@types/xml2js": "^0.4.11",
     "buffer": "^6.0.3",

@@ -16,17 +16,35 @@
             <canvas id="preview_canvas"></canvas>
         </section>
         <section id="properties_section" class="sections">
-            <p class="section-header">Properties</p>
-            <div class="input-group">
-                <div class="input-group">
-                    <label>W</label>
-                    <fluent-number-field id="width_input" step="0.1" value="1" class="size-inputs"></fluent-number-field>
-                </div>
-                <div class="input-group">
-                    <label>H</label>
-                    <fluent-number-field id="height_input" step="0.1" value="1" class="size-inputs"></fluent-number-field>
-                </div>
-            </div>
+            <fluent-accordion expand-mode="multi">
+                <fluent-accordion-item expanded>
+                  <span slot="heading">Source Media</span>
+                  <div>
+                    <div class="input-group">
+                        <div class="input-group">
+                            <label>W</label>
+                            <fluent-number-field id="width_input" step="0.1" value="1" class="size-inputs"></fluent-number-field>
+                        </div>
+                        <div class="input-group">
+                            <label>H</label>
+                            <fluent-number-field id="height_input" step="0.1" value="1" class="size-inputs"></fluent-number-field>
+                        </div>
+                        <label>in</label>
+                    </div>
+                  </div>
+                </fluent-accordion-item>
+                <fluent-accordion-item expanded>
+                  <span slot="heading">Page Setup</span>
+                  <div>
+                    <div class="input-group">
+                        <div class="input-group">
+                            <label>Page Size</label>
+                            <fluent-select id="page_size_select"></fluent-select>
+                        </div>
+                    </div>
+                  </div>
+                </fluent-accordion-itemexpanded>
+            </fluent-accordion>
         </section>
     </div>
 

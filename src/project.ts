@@ -1,11 +1,17 @@
 import { Builder, Parser } from 'xml2js';
 import { saveAs } from 'file-saver';
 import { Properties } from './properties';
+import { PageSetup } from './page-setup';
 
 export class Project extends EventTarget {
     public title: string;
     public source: string;
     public properties: Properties;
+
+    /**
+     * Configurations for the working page or area.
+     */
+    public pageSetup: PageSetup;
 
     constructor() {
         super();

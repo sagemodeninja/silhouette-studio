@@ -1,21 +1,22 @@
-import {provideFluentDesignSystem, fluentNumberField, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, AnchoredRegion, MenuItem, neutralLayer3} from '@fluentui/web-components';
+import {provideFluentDesignSystem, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, MenuItem, fluentAccordion, fluentAccordionItem, fluentSelect, fluentOption} from '@fluentui/web-components';
 import '/public/fonts/segoe-ui-variable/segoe-ui-variable.css';
 import '/public/css/app.css';
 
-import { PropertiesEditor } from './properties-editor';
-import { PreviewCanvas } from './preview-canvas';
+import { ProjectEditor } from './project-editor';
+import { ProjectCanvas } from './preview-canvas';
 import { Project } from './project';
 
 baseLayerLuminance.withDefault(StandardLuminance.DarkMode);
 
 provideFluentDesignSystem()
     .register(
-        fluentNumberField(),
         fluentButton(),
         fluentAnchoredRegion(),
-        fluentMenu(), 
+        fluentMenu(),
         fluentMenuItem(),
-        fluentDivider()
+        fluentDivider(),
+        fluentAccordion(),
+        fluentAccordionItem(),
     );
 
 class SilhouetteStudioTool {
@@ -24,15 +25,17 @@ class SilhouetteStudioTool {
 
     
     private _project: Project;
-    private _propertiesEditor: PropertiesEditor;
-    private _previewCanvas: PreviewCanvas;
+    private _editor: ProjectEditor;
+    private _previewCanvas: ProjectCanvas;
     private _fileInput: HTMLInputElement;
     private _exportMenuItem: MenuItem;
 
     constructor() {
-        this._project = new Project();
-        this._propertiesEditor = new PropertiesEditor();
-        this._previewCanvas = new PreviewCanvas();
+        const project = new Project();
+
+        this._project = project;
+        this._editor = new ProjectEditor(project);
+        this._previewCanvas = new ProjectCanvas(project);
         this._exportMenuItem = document.getElementById('export_menu_item') as MenuItem;
 
         // TODO: Refactor
@@ -46,14 +49,7 @@ class SilhouetteStudioTool {
 
     addEventListeners() {
         document.addEventListener('keydown', e => this.onKeyDown(e));
-        
-        this._project.addEventListener('load', () => {
-            this._propertiesEditor.open(this._project.properties);
-            this._previewCanvas.setup(this._project.source);
-            this._previewCanvas.update(this._project.properties);
-        });
-
-        this._propertiesEditor.subscribeNotifications(props => this._previewCanvas.update(props));
+        this._editor.addEventListener('change', () => this._previewCanvas.update());
         this._fileInput.addEventListener('change', () => this.openProject());
         this._exportMenuItem.addEventListener('click', () => this.exportProject());
     }
@@ -61,21 +57,9 @@ class SilhouetteStudioTool {
     onKeyDown(event: KeyboardEvent) {
         const control = event.ctrlKey || event.metaKey;
 
-        const isMacOrIOS = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform); 
-        const shift = 
-        
-        if (control && event.shiftKey && event.code == 'KeyO')
+        if (control && (event.code == 'KeyO' || event.code == 'KeyS'))
         {
             event.preventDefault();
-            console.log(1);
-        }
-
-        if ((event.ctrlKey || event.metaKey) && (event.key == 'o' || event.key == 's'))
-        {
-            event.preventDefault();
-            event.stopPropagation();
-
-            console.log('!');
 
             switch(event.key) {
                 case 'o':
