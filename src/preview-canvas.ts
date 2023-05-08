@@ -3,12 +3,12 @@ import { Rectangle } from './rectangle';
 import { Project } from './project';
 import * as papers from './data/papers.json';
 
-const A4_ASPECT_RATIO = 1.414; // ISO 216
 const ZOOM_FACTOR = 0.5;
 const MM_IN_INCHES = 25.4;
 
 export class ProjectCanvas {
     private _project: Project;
+    private _image: HTMLImageElement;
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D;
     private _workArea: Rectangle;
@@ -30,25 +30,37 @@ export class ProjectCanvas {
         const workArea = this._workArea;
         const properties = this._project.properties;
         const pageSetup = this._project.pageSetup;
-        
-        const image = new Image();
 
         const clientWidth = workArea.width;
         const clientHeight = workArea.height;
         const width = Math.round(properties.imageWidth * pageSetup.pixelPerInch);
         const height = Math.round(properties.imageHeight * pageSetup.pixelPerInch);
         const minumumSpace = properties.minSpacing * pageSetup.pixelPerInch;
-    
-        image.src = this._project.source;
-        image.onload = () => {
-            const rectangles = this.distributeRectangles(clientWidth, clientHeight, width, height, minumumSpace);
+        
+        const rectangles = this.distributeRectangles(clientWidth, clientHeight, width, height, minumumSpace);
 
-            rectangles.forEach(rect => {
-                const x = workArea.left + rect.x;
-                const y = workArea.top + rect.y;
-                this._context.drawImage(image, x, y, width, height);
-            });
-        };
+        // FIXME: New image not loaded!
+        if (!this._image)
+        {
+            this._image = new Image();
+            this._image.src = this._project.source;
+
+            this._image.onload = () => {
+                rectangles.forEach(rect => {
+                    const x = workArea.left + rect.x;
+                    const y = workArea.top + rect.y;
+                    this._context.drawImage(this._image, x, y, width, height);
+                });
+            }
+
+            return;
+        }
+    
+        rectangles.forEach(rect => {
+            const x = workArea.left + rect.x;
+            const y = workArea.top + rect.y;
+            this._context.drawImage(this._image, x, y, width, height);
+        });
     }
 
     private distributeRectangles(containerWidth: number, containerHeight: number, rectangleWidth: number, rectangleHeight: number, minSpacing: number): {x: number, y: number}[] {
@@ -94,7 +106,7 @@ export class ProjectCanvas {
         const size = paper.metric;
 
         const canvasWidth = Math.round(containerWidth * ZOOM_FACTOR);
-        const canvasHeight = Math.round(canvasWidth * A4_ASPECT_RATIO);
+        const canvasHeight = Math.round(canvasWidth * paper.aspectRatio);
         const renderWidth = Math.round(pageSetup.pixelPerInch * size.width / MM_IN_INCHES);
         const renderHeight = Math.round(pageSetup.pixelPerInch * size.height / MM_IN_INCHES);
 

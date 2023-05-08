@@ -1,6 +1,7 @@
 import { Builder, Parser } from 'xml2js';
 import { Properties } from './properties';
 import { PageSetup } from './page-setup';
+import { imageFileOptions, projectFileOptions } from './file-options';
 
 export class Project extends EventTarget {
     private _fileHandle: any;
@@ -19,14 +20,36 @@ export class Project extends EventTarget {
         super();
     }
 
-    public open(handle: any) {
-        const ext = handle[0].name.split('.').pop();
-        this._fileHandle = handle[0];
+    public async open(type: string) {
+        const options = type === 'project' ? projectFileOptions : imageFileOptions;
+
+        [this._fileHandle] = await window.showOpenFilePicker(options);
+        const ext = this._fileHandle.name.split('.').pop();
 
         if(ext == 'studio4')
             this.parseSaveFile();
         else
             this.parseImage();
+    }
+
+    public async save() {
+        const builder = new Builder();
+        const xml = builder.buildObject(this);
+
+        if (!this._local)
+            this._fileHandle = await window.showSaveFilePicker(projectFileOptions);
+
+        const writable = await this._fileHandle.createWritable();
+        const file = new Blob([xml], {type: 'text/xml;charset=utf-8'});
+
+        await writable.write(file)
+        await writable.close();
+        
+        this._local = true;
+    }
+
+    public export() {
+        // Not implemented!
     }
 
     private async parseSaveFile() {
@@ -88,37 +111,11 @@ export class Project extends EventTarget {
         const event = new Event('load');
         this.dispatchEvent(event);
     }
-
-    public async save() {
-        const builder = new Builder();
-        const xml = builder.buildObject(this);
-
-        if (!this._local)
-        {
-            const options = {
-                types: [
-                    {
-                        description: 'Silhouette Studio Tool Project',
-                        accept: {
-                            'application/octet-stream': ['.studio4']
-                        }
-                    },
-                ],
-            };
-            this._fileHandle = await window.showSaveFilePicker(options);
-        }
-
-        const writable = await this._fileHandle.createWritable();
-        const file = new Blob([xml], {type: 'text/xml;charset=utf-8'});
-
-        await writable.write(file)
-        await writable.close();
-        
-        this._local = true;
-    }
 }
 
+// TODO: Remove if official support comes.
 declare const window: Window &
 typeof globalThis & {
-    showSaveFilePicker: any
+    showOpenFilePicker: any,
+    showSaveFilePicker: any,
 }

@@ -19,27 +19,25 @@ header,
 #container,
 footer {
     box-sizing: border-box;
+    display: flex;
     width: 100%;
 }
 
 header {
     align-items: center;
     border-bottom: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-layer-rest);
-    display: flex;
     height: var(--header-height);
     justify-content: space-between;
     padding: 0 15px;
 }
 
 #container {
-    display: flex;
     height: calc(100% - (var(--header-height) + var(--footer-height)));
 }
 
 footer {
     align-items: center;
     border-top: solid 1px var(--neutral-stroke-layer-rest);
-    display: flex;
     height: var(--footer-height);
     justify-content: space-between;
     padding: 0 15px;
@@ -55,14 +53,15 @@ footer {
 
 #preview_section {
     display: flex;
-    flex-grow: 1;
     justify-content: center;
     overflow-y: auto;
     padding: 20px;
+    width: calc(100% - 350px);
 }
 
 #properties_section {
     border-left: solid 1px var(--neutral-stroke-layer-rest);
+    overflow-y: auto;
     padding: 20px;
     width: 350px;
 }
@@ -101,12 +100,13 @@ footer {
     min-width: min-content;
 }
 
-fluent-anchored-region:has(fluent-menu) {
+.menu-region {
     padding-top: 8px;
 }
 
+.menu
 fluent-menu-item::part(content) {
-    padding-right: 15px;
+    padding-right: 28px;
 }
 
 kbd {

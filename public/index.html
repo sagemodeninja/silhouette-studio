@@ -19,10 +19,10 @@
             vertical-default-position="bottom">
             <fluent-menu class="menu">
                 <fluent-menu-item data-action="open">Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
-                <fluent-menu-item data-action="open_image">Open Image <kbd slot="end">Ctrl+Shift+O</kbd></fluent-menu-item>
+                <fluent-menu-item data-action="import_image">Import Image <kbd slot="end">Ctrl+Shift+I</kbd></fluent-menu-item>
                 <fluent-divider></fluent-divider>
                 <fluent-menu-item data-action="save">Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
-                <fluent-menu-item data-action="export">Export to Image <kbd slot="end">Ctrl+Shift+E</kbd></fluent-menu-item>
+                <fluent-menu-item data-action="export_as_image">Export to Image <kbd slot="end">Ctrl+Shift+E</kbd></fluent-menu-item>
             </fluent-menu>
         </fluent-anchored-region>
         <div id="title_bar">
@@ -89,9 +89,7 @@
                             <label>dpi</label>
                         </div>
                     </div>
-                    <br/>
                     <fluent-divider></fluent-divider>
-                    <br/>
                     <div class="input-group">
                         <fluent-checkbox id="cut_border_check" checked>Show Cut Border</fluent-checkbox>
                     </div>

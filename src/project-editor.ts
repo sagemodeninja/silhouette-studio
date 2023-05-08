@@ -1,7 +1,10 @@
 import {
     NumberField, 
     Select,
+    fluentAccordion,
+    fluentAccordionItem,
     fluentCheckbox,
+    fluentDivider,
     fluentNumberField, 
     fluentOption, 
     fluentSelect, 
@@ -13,6 +16,9 @@ import * as papers from './data/papers.json';
 
 provideFluentDesignSystem()
     .register(
+        fluentDivider(),
+        fluentAccordion(),
+        fluentAccordionItem(),
         fluentNumberField(),
         fluentSelect(),
         fluentOption(),
