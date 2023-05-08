@@ -1,27 +1,52 @@
+:root {
+    --header-height: 30px;
+    --footer-height: 30px;
+}
+
 body {
-    display: flex;
-    flex-direction: column;
     font-family: 'Segoe UI Variable';
     height: 100vh;
     margin: 0;
 }
 
 header,
+footer,
 .sections {
     background-color: var(--fill-color);
 }
 
+header,
+#container,
+footer {
+    box-sizing: border-box;
+    width: 100%;
+}
+
 header {
     align-items: center;
-    border-bottom: solid 1px var(--neutral-stroke-layer-rest);
+    border-bottom: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-layer-rest);
     display: flex;
-    height: 30px;
+    height: var(--header-height);
+    justify-content: space-between;
     padding: 0 15px;
 }
 
 #container {
     display: flex;
-    height: calc(100% - 30px);
+    height: calc(100% - (var(--header-height) + var(--footer-height)));
+}
+
+footer {
+    align-items: center;
+    border-top: solid 1px var(--neutral-stroke-layer-rest);
+    display: flex;
+    height: var(--footer-height);
+    justify-content: space-between;
+    padding: 0 15px;
+}
+
+#project_title.unsaved {
+    font-style: italic;
 }
 
 #preview_section {
@@ -47,6 +72,7 @@ header {
 
 .input-group {
     align-items: center;
+    color: var(--neutral-foreground-rest);
     display: flex;
     gap: 10px;
 }
@@ -58,7 +84,7 @@ header {
 }
 
 .input-group label {
-    color: #fff;
+    font-family: 'Segoe UI Variable';
     font-variation-settings: 'wght' 400, 'opsz' 20;
     font-size: 14px;
 }
@@ -81,4 +107,12 @@ fluent-menu-item::part(content) {
 
 kbd {
     font-family: var(--body-font);
+}
+
+footer,
+#title_bar {
+    color: var(--neutral-foreground-rest);
+    font-variation-settings: 'wght' 400, 'opsz' 20;
+    font-size: 14px;
+    /* user-select: none; */
 }

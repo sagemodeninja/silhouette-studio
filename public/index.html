@@ -9,7 +9,12 @@
 <body>
     <header>
         <fluent-button id="file_menu_button" appearance="stealth">File</fluent-button>
-        <span>*Untitled</span>
+        <div id="title_bar">
+            <span id="project_title" class="unsaved">Untitled*</span>
+            —
+            <span>Silhouette Studio Tool</span>
+        </div>
+        <div></div>
     </header>
     <div id="container">
         <section id="preview_section" class="sections">
@@ -65,10 +70,18 @@
                         <fluent-checkbox id="cut_border_check" checked>Show Cut Border</fluent-checkbox>
                     </div>
                   </div>
-                </fluent-accordion-itemexpanded>
+                </fluent-accordion-item>
             </fluent-accordion>
         </section>
     </div>
+    <footer>
+        <div></div>
+        <span id="credits">
+            👨‍💻 with ❤️ by 
+            <fluent-anchor href="https://github.com/sagemodeninja" target="_blank" appearance="hypertext">Gary Antier</fluent-anchor>
+        </span>
+        <span>v0.1.0-beta</span>
+    </footer>
 
     <fluent-anchored-region
         id="file_menu"
@@ -78,12 +91,12 @@
         horizontal-inset="true"
         vertical-positioning-mode="dynamic"
         vertical-default-position="bottom">
-        <fluent-menu>
-            <fluent-menu-item>Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
+        <fluent-menu class="menu">
+            <fluent-menu-item data-action="open">Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
             <fluent-divider></fluent-divider>
-            <fluent-menu-item>Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
+            <fluent-menu-item data-action="save">Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
             <fluent-divider></fluent-divider>
-            <fluent-menu-item id="export_menu_item">Export to Image <kbd slot="end">Ctrl+Shift+E</kbd></fluent-menu-item>
+            <fluent-menu-item data-action="export">Export to Image <kbd slot="end">Ctrl+Shift+E</kbd></fluent-menu-item>
         </fluent-menu>
     </fluent-anchored-region>
 </body>
