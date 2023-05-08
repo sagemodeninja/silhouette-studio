@@ -37,7 +37,7 @@ export class ProjectCanvas {
         const clientHeight = workArea.height;
         const width = Math.round(properties.imageWidth * pageSetup.pixelPerInch);
         const height = Math.round(properties.imageHeight * pageSetup.pixelPerInch);
-        const minumumSpace = 0.1 * pageSetup.pixelPerInch;
+        const minumumSpace = properties.minSpacing * pageSetup.pixelPerInch;
     
         image.src = this._project.source;
         image.onload = () => {

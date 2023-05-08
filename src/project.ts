@@ -49,8 +49,8 @@ export class Project extends EventTarget {
             this.properties = {
                 imageWidth: parseFloat(properties.imageWidth),
                 imageHeight: parseFloat(properties.imageHeight),
-                exportResolution: parseFloat(properties.exportResolution),
-                showCutBorder: properties.showCutBorder
+                minSpacing: parseFloat(properties.minSpacing),
+                showCutBorder: properties.showCutBorder,
             };
             this.pageSetup = {
                 size: pageSetup.size,
@@ -73,7 +73,7 @@ export class Project extends EventTarget {
             this.properties = {
                 imageWidth: 1,
                 imageHeight: 1,
-                exportResolution: 300,
+                minSpacing: 0.1,
                 showCutBorder: true
             };
 

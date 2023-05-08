@@ -1,6 +1,6 @@
 export type Properties = {
     imageWidth: number;
     imageHeight: number;
-    exportResolution: number;
+    minSpacing: number;
     showCutBorder: boolean;
 };

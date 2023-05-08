@@ -24,6 +24,7 @@ export class ProjectEditor extends EventTarget {
     private _loaded: boolean;
     private _imageWidthInput: NumberField;
     private _imageHeightInput: NumberField;
+    private _minSpaceInput: NumberField;
     private _pageSizeSelect: Select;
     private _pageOrientationSelect: Select;
     private _resolutionInput: NumberField;
@@ -35,6 +36,7 @@ export class ProjectEditor extends EventTarget {
         this._project = project;
         this._imageWidthInput = document.getElementById('width_input') as NumberField;
         this._imageHeightInput = document.getElementById('height_input') as NumberField;
+        this._minSpaceInput = document.getElementById('min_space_input') as NumberField;
         this._pageSizeSelect = document.getElementById('page_size_select') as Select;
         this._pageOrientationSelect = document.getElementById('page_orientation_select') as Select;
         this._resolutionInput = document.getElementById('resolution_input') as NumberField;
@@ -59,6 +61,7 @@ export class ProjectEditor extends EventTarget {
         this._project.addEventListener('load', () => this.loadProject());
         this._imageWidthInput.addEventListener('input', () => this.onChange());
         this._imageHeightInput.addEventListener('input', () => this.onChange());
+        this._minSpaceInput.addEventListener('input', () => this.onChange());
         this._pageSizeSelect.addEventListener('change', () => this.onChange());
         this._pageOrientationSelect.addEventListener('change', () => this.onChange());
         this._resolutionInput.addEventListener('input', () => this.onChange());
@@ -73,6 +76,7 @@ export class ProjectEditor extends EventTarget {
 
         this._imageWidthInput.valueAsNumber = properties.imageWidth;
         this._imageHeightInput.valueAsNumber = properties.imageHeight;
+        this._minSpaceInput.valueAsNumber = properties.minSpacing;
         this._pageSizeSelect.value = pageSetup.size;
         this._pageOrientationSelect.value = pageSetup.orientation.toString();
         this._resolutionInput.valueAsNumber = pageSetup.pixelPerInch;
@@ -85,6 +89,7 @@ export class ProjectEditor extends EventTarget {
         
         this._project.properties.imageWidth = this._imageWidthInput.valueAsNumber;
         this._project.properties.imageHeight = this._imageHeightInput.valueAsNumber;
+        this._project.properties.minSpacing = this._minSpaceInput.valueAsNumber;
         this._project.properties.showCutBorder = this._showCutBorderCheck.checked;
         this._project.pageSetup.size = this._pageSizeSelect.value;
         this._project.pageSetup.orientation = parseInt(this._pageOrientationSelect.value);

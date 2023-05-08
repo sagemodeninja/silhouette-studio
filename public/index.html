@@ -9,8 +9,24 @@
 <body>
     <header>
         <fluent-button id="file_menu_button" appearance="stealth">File</fluent-button>
+        <fluent-anchored-region
+            id="file_menu"
+            anchor="file_menu_button"
+            horizontal-positioning-mode="dynamic"
+            horizontal-default-position="right"
+            horizontal-inset="true"
+            vertical-positioning-mode="dynamic"
+            vertical-default-position="bottom">
+            <fluent-menu class="menu">
+                <fluent-menu-item data-action="open">Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
+                <fluent-menu-item data-action="open_image">Open Image <kbd slot="end">Ctrl+Shift+O</kbd></fluent-menu-item>
+                <fluent-divider></fluent-divider>
+                <fluent-menu-item data-action="save">Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
+                <fluent-menu-item data-action="export">Export to Image <kbd slot="end">Ctrl+Shift+E</kbd></fluent-menu-item>
+            </fluent-menu>
+        </fluent-anchored-region>
         <div id="title_bar">
-            <span id="project_title" class="unsaved">Untitled*</span>
+            <span id="project_title" class="unsaved">New Project</span>
             —
             <span>Silhouette Studio Tool</span>
         </div>
@@ -23,18 +39,28 @@
         <section id="properties_section" class="sections">
             <fluent-accordion expand-mode="multi">
                 <fluent-accordion-item expanded>
-                  <span slot="heading">Source Media</span>
+                  <span slot="heading">Properties</span>
                   <div class="properties-panel">
-                    <div class="input-group">
+                    <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
+                        <label>Width</label>
                         <div class="input-group">
-                            <label>W:</label>
                             <fluent-number-field id="width_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
+                            <label>in</label>
                         </div>
+                    </div>
+                    <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
+                        <label>Height</label>
                         <div class="input-group">
-                            <label>H:</label>
                             <fluent-number-field id="height_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
+                            <label>in</label>
                         </div>
-                        <label>in</label>
+                    </div>
+                    <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
+                        <label>Min. Space</label>
+                        <div class="input-group">
+                            <fluent-number-field id="min_space_input" step="0.1" value="0.1" min="0.1" class="input small"></fluent-number-field>
+                            <label>in</label>
+                        </div>
                     </div>
                   </div>
                 </fluent-accordion-item>
@@ -82,22 +108,5 @@
         </span>
         <span>v0.1.0-beta</span>
     </footer>
-
-    <fluent-anchored-region
-        id="file_menu"
-        anchor="file_menu_button"
-        horizontal-positioning-mode="dynamic"
-        horizontal-default-position="right"
-        horizontal-inset="true"
-        vertical-positioning-mode="dynamic"
-        vertical-default-position="bottom">
-        <fluent-menu class="menu">
-            <fluent-menu-item data-action="open">Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
-            <fluent-divider></fluent-divider>
-            <fluent-menu-item data-action="save">Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
-            <fluent-divider></fluent-divider>
-            <fluent-menu-item data-action="export">Export to Image <kbd slot="end">Ctrl+Shift+E</kbd></fluent-menu-item>
-        </fluent-menu>
-    </fluent-anchored-region>
 </body>
 </html>

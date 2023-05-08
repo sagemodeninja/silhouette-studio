@@ -49,6 +49,10 @@ footer {
     font-style: italic;
 }
 
+#project_title.unsaved::after {
+    content: '*';
+}
+
 #preview_section {
     display: flex;
     flex-grow: 1;
@@ -114,5 +118,4 @@ footer,
     color: var(--neutral-foreground-rest);
     font-variation-settings: 'wght' 400, 'opsz' 20;
     font-size: 14px;
-    /* user-select: none; */
 }
