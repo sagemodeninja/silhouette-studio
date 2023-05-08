@@ -2,6 +2,7 @@ import * as saveAs from 'file-saver';
 import { Rectangle } from './rectangle';
 import { Project } from './project';
 import * as papers from './data/papers.json';
+import { PageOrientation } from './page-setup';
 
 const ZOOM_FACTOR = 0.5;
 const MM_IN_INCHES = 25.4;
@@ -22,10 +23,14 @@ export class ProjectCanvas {
         this.addEventListeners();
     }
 
-    public update() {
-        if (!this._project) return;
+    public update(property: string) {
+        if (!this._project)
+            return;
 
-        this.clear();
+        if (property === 'page_setup')
+            this.setup();
+        else
+            this.clear();
 
         const workArea = this._workArea;
         const properties = this._project.properties;
@@ -39,7 +44,6 @@ export class ProjectCanvas {
         
         const rectangles = this.distributeRectangles(clientWidth, clientHeight, width, height, minumumSpace);
 
-        // FIXME: New image not loaded!
         if (!this._image)
         {
             this._image = new Image();
@@ -88,38 +92,34 @@ export class ProjectCanvas {
     }
 
     private setup() {
-        this.scale();
-        this.clear();
+        this.setupCanvas();
         this.calculateWorkArea();
+        this.clear();
     }
 
     private addEventListeners() {
-        this._project.addEventListener('load', () => this.update());
+        this._project.addEventListener('load', () => {
+            this._image = null;
+            this.update('source');
+        });
+        this._project.changeTracker.subscribe(p => this.update(p));
     }
 
-    private scale() {
-        const container = this._canvas.parentElement as HTMLDivElement;
-        const containerWidth = container.getBoundingClientRect().width;
-        
+    private setupCanvas() {
         const pageSetup = this._project.pageSetup;
         const paper = Array.from(papers).find(p => p.id == pageSetup.size);
-        const size = paper.metric;
+        const containerWidth = this._canvas.parentElement.offsetWidth;
 
+        const renderMainLength = Math.round(pageSetup.pixelPerInch * paper.metric.width / MM_IN_INCHES);
+        const renderCrossLength = Math.round(pageSetup.pixelPerInch * paper.metric.height / MM_IN_INCHES);
         const canvasWidth = Math.round(containerWidth * ZOOM_FACTOR);
-        const canvasHeight = Math.round(canvasWidth * paper.aspectRatio);
-        const renderWidth = Math.round(pageSetup.pixelPerInch * size.width / MM_IN_INCHES);
-        const renderHeight = Math.round(pageSetup.pixelPerInch * size.height / MM_IN_INCHES);
+        const canvasHeight = Math.round(canvasWidth / ((pageSetup.orientation + 1) / paper.aspectRatio));
 
-        this._canvas.width = renderWidth;
-        this._canvas.height = renderHeight;
+        const portrait = pageSetup.orientation === PageOrientation.Portrait;
+        this._canvas.width = portrait ? renderMainLength : renderCrossLength;
+        this._canvas.height = portrait ? renderCrossLength : renderMainLength;
         this._canvas.style.width = canvasWidth + 'px';
         this._canvas.style.height = canvasHeight + 'px';
-    }
-
-    private clear() {
-        this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-        this._context.fillStyle = '#fff';
-        this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
     }
 
     private calculateWorkArea() {
@@ -127,6 +127,13 @@ export class ProjectCanvas {
         const cutBorderSize = 0.059 * resolution;
         const width = this._canvas.width - (cutBorderSize * 2);
         const height = this._canvas.height - (cutBorderSize * 2);
+
         this._workArea = new Rectangle(cutBorderSize, cutBorderSize, width, height);
+    }
+
+    private clear() {
+        this._context.fillStyle = '#fff';
+        this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
     }
 }

@@ -1,4 +1,4 @@
-enum PageOrientation {
+export enum PageOrientation {
     Portrait,
     Landscape
 }

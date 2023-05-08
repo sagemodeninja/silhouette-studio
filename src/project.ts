@@ -2,22 +2,34 @@ import { Builder, Parser } from 'xml2js';
 import { Properties } from './properties';
 import { PageSetup } from './page-setup';
 import { imageFileOptions, projectFileOptions } from './file-options';
+import { ChangeTracker } from './change-tracker';
 
 export class Project extends EventTarget {
     private _fileHandle: any;
     private _local: boolean;
 
     public title: string;
+    /**
+     * The media source.
+     */
     public source: string;
+    /**
+     * Properties that affects the state of the project.
+     */
     public properties: Properties;
-
     /**
      * Configurations for the working page or area.
      */
     public pageSetup: PageSetup = new PageSetup();
+    
+    public changeTracker: ChangeTracker;
+    public saved: boolean;
 
     constructor() {
         super();
+
+        this.changeTracker = new ChangeTracker();
+        this.addEventListeners();
     }
 
     public async open(type: string) {
@@ -33,42 +45,63 @@ export class Project extends EventTarget {
     }
 
     public async save() {
-        const builder = new Builder();
-        const xml = builder.buildObject(this);
+        const options = {rootName:'project'};
+        const builder = new Builder(options);
+        const content = {
+            title: this.title,
+            source: this.source,
+            properties: this.properties,
+            pageSetup: this.pageSetup
+        };
 
         if (!this._local)
             this._fileHandle = await window.showSaveFilePicker(projectFileOptions);
 
         const writable = await this._fileHandle.createWritable();
+        const xml = builder.buildObject(content);
         const file = new Blob([xml], {type: 'text/xml;charset=utf-8'});
 
         await writable.write(file)
         await writable.close();
         
         this._local = true;
+        this.saved = true;
+        this.changeTracker.notify('save_state');
     }
 
     public export() {
         // Not implemented!
     }
 
+    private addEventListeners() {
+        this.changeTracker.subscribe(prop => {
+            if (prop === 'save_state')
+                return;
+
+            this.saved = false;
+            this.changeTracker.notify('save_state');
+        });
+    }
+
     private async parseSaveFile() {
         const file = await this._fileHandle.getFile();
         const xml = await file.text();
+        const parser = new Parser({
+            explicitArray: false,
+            explicitRoot: false,
+        });
 
-        const parser = new Parser({explicitArray: false});
         parser.parseString(xml, (err, result) => {
             if (err) {
                 console.error(err);
                 return;
             }
 
-            const root = result.root;
-            const properties = root.properties;
-            const pageSetup = root.pageSetup;
+            const properties = result.properties;
+            const pageSetup = result.pageSetup;
 
-            this.title = root.title;
-            this.source = root.source;
+            this.title = result.title;
+            this.source = result.source;
             this.properties = {
                 imageWidth: parseFloat(properties.imageWidth),
                 imageHeight: parseFloat(properties.imageHeight),
@@ -82,6 +115,8 @@ export class Project extends EventTarget {
             };
 
             this._local = true;
+            this.saved = true;
+            this.changeTracker.notify('save_state');
             this.loaded();
         });
     }
@@ -101,6 +136,8 @@ export class Project extends EventTarget {
             };
 
             this._local = false;
+            this.saved = false;
+            this.changeTracker.notify('save_state');
             this.loaded();
         }
         

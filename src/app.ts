@@ -29,6 +29,7 @@ class SilhouetteStudioTool {
     private _menuBar: MenuBar;
     private _editor: ProjectEditor;
     private _previewCanvas: ProjectCanvas;
+    private _projectTitle: HTMLSpanElement;
 
     constructor() {
         const project = new Project();
@@ -37,6 +38,7 @@ class SilhouetteStudioTool {
         this._menuBar = new MenuBar();
         this._editor = new ProjectEditor(project);
         this._previewCanvas = new ProjectCanvas(project);
+        this._projectTitle = document.getElementById('project_title');
 
         this.setDesignTokens();
         this.addEventListeners();
@@ -44,10 +46,9 @@ class SilhouetteStudioTool {
 
     private addEventListeners() {
         this._menuBar.oninvoke(action => this.handleActions(action));
-
         document.addEventListener('keydown', e => this.handleKeyboard(e));
-
-        this._editor.addEventListener('change', () => this._previewCanvas.update());
+        this._project.addEventListener('load', () => this.updateTitle());
+        this._project.changeTracker.subscribe(p => this.updateTitle(p));
     }
 
     private handleKeyboard(e: KeyboardEvent) {
@@ -69,9 +70,17 @@ class SilhouetteStudioTool {
                 this._project.save();
                 break;
             case 'export_as_image':
-                this._project.export();
+                this._previewCanvas.export();
                 break;
         }
+    }
+
+    private updateTitle(state?: string) {
+        if (state && !(state === 'title' || state === 'save_state'))
+            return;
+
+        this._projectTitle.innerText = this._project.title;
+        this._projectTitle.classList.toggle('unsaved', !this._project.saved);
     }
 
     private setDesignTokens() {
