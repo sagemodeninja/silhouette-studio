@@ -36,8 +36,8 @@ class SilhouetteStudioTool {
 
         this._project = project;
         this._menuBar = new MenuBar();
-        this._editor = new ProjectEditor(project);
-        this._previewCanvas = new ProjectCanvas(project);
+        this._editor = new ProjectEditor();
+        this._previewCanvas = new ProjectCanvas();
         this._projectTitle = document.getElementById('project_title');
 
         this.setDesignTokens();
@@ -47,7 +47,7 @@ class SilhouetteStudioTool {
     private addEventListeners() {
         this._menuBar.oninvoke(action => this.handleActions(action));
         document.addEventListener('keydown', e => this.handleKeyboard(e));
-        this._project.addEventListener('load', () => this.updateTitle());
+        this._project.addEventListener('load', () => this.loadProject());
         this._project.changeTracker.subscribe(p => this.updateTitle(p));
     }
 
@@ -73,6 +73,12 @@ class SilhouetteStudioTool {
                 this._previewCanvas.export();
                 break;
         }
+    }
+
+    private loadProject() {
+        this._editor.register(this._project);
+        this._previewCanvas.register(this._project);
+        this.updateTitle();
     }
 
     private updateTitle(state?: string) {

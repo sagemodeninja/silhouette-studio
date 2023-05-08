@@ -20,7 +20,7 @@ export class Project extends EventTarget {
     /**
      * Configurations for the working page or area.
      */
-    public pageSetup: PageSetup = new PageSetup();
+    public pageSetup: PageSetup;
     
     public changeTracker: ChangeTracker;
     public saved: boolean;
@@ -28,7 +28,9 @@ export class Project extends EventTarget {
     constructor() {
         super();
 
+        this.pageSetup = PageSetup.default;
         this.changeTracker = new ChangeTracker();
+
         this.addEventListeners();
     }
 
@@ -108,11 +110,9 @@ export class Project extends EventTarget {
                 minSpacing: parseFloat(properties.minSpacing),
                 showCutBorder: properties.showCutBorder,
             };
-            this.pageSetup = {
-                size: pageSetup.size,
-                orientation: parseInt(pageSetup.orientation),
-                pixelPerInch: parseInt(pageSetup.pixelPerInch)
-            };
+            this.pageSetup = new PageSetup(pageSetup.size);
+            this.pageSetup.orientation = pageSetup.orientation;
+            this.pageSetup.pixelPerInch = pageSetup.pixelPerInch;
 
             this._local = true;
             this.saved = true;

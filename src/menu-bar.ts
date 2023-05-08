@@ -1,4 +1,13 @@
-import { AnchoredRegion, MenuItem, designUnit, fluentAnchoredRegion, fluentButton, fluentMenu, fluentMenuItem, provideFluentDesignSystem } from '@fluentui/web-components';
+import { 
+    AnchoredRegion,
+    MenuItem,
+    designUnit,
+    fluentAnchoredRegion,
+    fluentButton,
+    fluentMenu,
+    fluentMenuItem,
+    provideFluentDesignSystem
+} from '@fluentui/web-components';
 import { Button } from '@microsoft/fast-foundation';
 
 provideFluentDesignSystem()

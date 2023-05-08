@@ -12,7 +12,7 @@ import {
 } from '@fluentui/web-components';
 import { Project } from './project';
 import { Checkbox, ListboxOption } from '@microsoft/fast-foundation';
-import * as papers from './data/papers.json';
+import { papers } from './paper';
 
 provideFluentDesignSystem()
     .register(
@@ -28,6 +28,7 @@ provideFluentDesignSystem()
 export class ProjectEditor {
     private _project: Project;
     private _loaded: boolean;
+
     private _imageWidthInput: NumberField;
     private _imageHeightInput: NumberField;
     private _minSpaceInput: NumberField;
@@ -36,8 +37,7 @@ export class ProjectEditor {
     private _resolutionInput: NumberField;
     private _showCutBorderCheck: Checkbox;
 
-    constructor(project: Project) {
-        this._project = project;
+    constructor() {
         this._imageWidthInput = document.getElementById('width_input') as NumberField;
         this._imageHeightInput = document.getElementById('height_input') as NumberField;
         this._minSpaceInput = document.getElementById('min_space_input') as NumberField;
@@ -50,34 +50,13 @@ export class ProjectEditor {
         this.addEventListeners();
     }
 
-    private setup() {
-        const options = Array.from(papers).reduce((options, paper) => {
-            const text = `${paper.id} (${paper.imperial.width} x ${paper.imperial.height} in)`;
-            
-            options.push(new ListboxOption(text, paper.id));
-            return options;
-        }, []);
-
-        this._pageSizeSelect.append(...options);
-    }
-
-    private addEventListeners() {
-        this._project.addEventListener('load', () => this.loadProject());
-        this._imageWidthInput.addEventListener('input', () => this.update('properties'));
-        this._imageHeightInput.addEventListener('input', () => this.update('properties'));
-        this._minSpaceInput.addEventListener('input', () => this.update('properties'));
-        this._pageSizeSelect.addEventListener('change', () => this.update('page_setup'));
-        this._pageOrientationSelect.addEventListener('change', () => this.update('page_setup'));
-        this._resolutionInput.addEventListener('input', () => this.update('page_setup'));
-        this._showCutBorderCheck.addEventListener('change', () => this.update('page_setup'));
-    }
-
-    private loadProject() {
-        const properties = this._project.properties;
-        const pageSetup = this._project.pageSetup;
+    public register(project: Project) {
+        const properties = project.properties;
+        const pageSetup = project.pageSetup;
 
         this._loaded = false;
 
+        this._project = project;
         this._imageWidthInput.valueAsNumber = properties.imageWidth;
         this._imageHeightInput.valueAsNumber = properties.imageHeight;
         this._minSpaceInput.valueAsNumber = properties.minSpacing;
@@ -86,6 +65,25 @@ export class ProjectEditor {
         this._resolutionInput.valueAsNumber = pageSetup.pixelPerInch;
         
         this._loaded = true;
+    }
+
+    private setup() {
+        papers.forEach(paper => {
+            const text = `${paper.id} (${paper.imperial.width} x ${paper.imperial.height} in)`;
+            const option = new ListboxOption(text, paper.id);
+
+            this._pageSizeSelect.appendChild(option);
+        });
+    }
+
+    private addEventListeners() {
+        this._imageWidthInput.addEventListener('input', () => this.update('properties'));
+        this._imageHeightInput.addEventListener('input', () => this.update('properties'));
+        this._minSpaceInput.addEventListener('input', () => this.update('properties'));
+        this._pageSizeSelect.addEventListener('change', () => this.update('page_setup'));
+        this._pageOrientationSelect.addEventListener('change', () => this.update('page_setup'));
+        this._resolutionInput.addEventListener('input', () => this.update('page_setup'));
+        this._showCutBorderCheck.addEventListener('change', () => this.update('page_setup'));
     }
 
     private update(property: string) {
