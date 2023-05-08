@@ -37,33 +37,37 @@ export class ProjectCanvas {
         const clientHeight = workArea.height;
         const width = Math.round(properties.imageWidth * pageSetup.pixelPerInch);
         const height = Math.round(properties.imageHeight * pageSetup.pixelPerInch);
-
         const minumumSpace = 0.1 * pageSetup.pixelPerInch;
-        const columnCount = Math.floor(clientWidth / (width + minumumSpace));
-        const rowCount = Math.floor(clientHeight / (height + minumumSpace));
-        
-        const availableWidth = clientWidth - (width * columnCount) + minumumSpace;
-        const availableHeight = clientHeight - (height * rowCount);
-
-        const horizontalSpace = availableWidth / (columnCount);
-        const verticalSpace = availableHeight / (rowCount);
-
-        const offsetWidth = width + horizontalSpace;
-        const offsetHeight = height + verticalSpace;
-        const offsetTop = horizontalSpace / 2;
-        const offsetLeft = verticalSpace / 2;
     
         image.src = this._project.source;
         image.onload = () => {
+            const rectangles = this.distributeRectangles(clientWidth, clientHeight, width, height, minumumSpace);
 
-            for(let row=0; row<rowCount; row++) {
-                const top = workArea.top + offsetTop + (offsetHeight * row);
-                for(let column=0; column<columnCount; column++) {
-                    const left = workArea.left + offsetLeft + (offsetWidth * column);
-                    this._context.drawImage(image, left, top, width, height);
-                }
-            }
+            rectangles.forEach(rect => {
+                const x = workArea.left + rect.x;
+                const y = workArea.top + rect.y;
+                this._context.drawImage(image, x, y, width, height);
+            });
         };
+    }
+
+    private distributeRectangles(containerWidth: number, containerHeight: number, rectangleWidth: number, rectangleHeight: number, minSpacing: number): {x: number, y: number}[] {
+        const result: {x: number, y: number}[] = [];
+        
+        const numColumns = Math.floor((containerWidth + minSpacing) / (rectangleWidth + minSpacing));
+        const numRows = Math.floor((containerHeight + minSpacing) / (rectangleHeight + minSpacing));
+        const spacingX = (containerWidth - (numColumns * rectangleWidth)) / (numColumns + 1);
+        const spacingY = (containerHeight - (numRows * rectangleHeight)) / (numRows + 1);
+        
+        for (let row = 0; row < numRows; row++) {
+            for (let column = 0; column < numColumns; column++) {
+            const x = spacingX + (column * (rectangleWidth + spacingX));
+            const y = spacingY + (row * (rectangleHeight + spacingY));
+            result.push({x, y});
+            }
+        }
+        
+        return result;
     }
 
     public export() {
