@@ -1,19 +1,16 @@
-import {provideFluentDesignSystem, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentMenu, fluentMenuItem, fluentDivider, MenuItem, fluentAccordion, fluentAccordionItem, fluentSelect, fluentOption, neutralLayer3, density, Button, designUnit, Menu, fluentToolbar, AnchoredRegion, fluentAnchor, bodyFont, typeRampBaseFontSize} from '@fluentui/web-components';
+import {provideFluentDesignSystem, baseLayerLuminance, StandardLuminance, neutralLayer2, fillColor, neutralLayer1, fluentButton, fluentAnchoredRegion, fluentDivider, fluentAccordion, fluentAccordionItem, neutralLayer3, fluentToolbar, fluentAnchor} from '@fluentui/web-components';
 import '/public/fonts/segoe-ui-variable/segoe-ui-variable.css';
 import '/public/css/app.css';
 
 import { ProjectEditor } from './project-editor';
 import { ProjectCanvas } from './preview-canvas';
 import { Project } from './project';
+import { MenuBar } from './menu-bar';
 
 baseLayerLuminance.withDefault(StandardLuminance.DarkMode);
 
 provideFluentDesignSystem()
     .register(
-        fluentButton(),
-        fluentAnchoredRegion(),
-        fluentMenu(),
-        fluentMenuItem(),
         fluentDivider(),
         fluentAccordion(),
         fluentAccordionItem(),
@@ -26,77 +23,29 @@ class SilhouetteStudioTool {
     public propertiesSection: HTMLDivElement;
 
     private _project: Project;
+    private _menuBar: MenuBar;
     private _editor: ProjectEditor;
     private _previewCanvas: ProjectCanvas;
-    private _fileInput: HTMLInputElement;
-    private _fileMenuButton: Button;
-    private _fileMenu: AnchoredRegion;
 
     constructor() {
         const project = new Project();
 
         this._project = project;
+        this._menuBar = new MenuBar();
         this._editor = new ProjectEditor(project);
         this._previewCanvas = new ProjectCanvas(project);
-        this._fileMenuButton = document.getElementById('file_menu_button') as Button;
-        this._fileMenu = document.getElementById('file_menu') as AnchoredRegion;
-
-        // TODO: Refactor
-        this._fileInput = document.createElement('input');
-        this._fileInput.type = 'file';
-        this._fileInput.accept = '.studio4,.jpg,.jpeg,.png';
-
-        const menus = document.getElementsByClassName('menu');
-        const menuItems = Array.from(menus).reduce((acc, curr) => {
-            const items = curr.getElementsByTagName('fluent-menu-item');
-            return acc.concat(Array.from(items));
-        }, []);
-
-        menuItems.forEach(i => {
-            i.addEventListener('click', () => {
-                switch(i.dataset.action) {
-                    case 'open':
-                        this.openProject();
-                        break;
-                    case 'save':
-                        this._project.save();
-                        break;
-                    case 'export':
-                        this.exportProject();
-                        break;
-                }
-            });
-        });
 
         this.setDesignTokens();
         this.addEventListeners();
     }
 
-    addEventListeners() {
-        document.addEventListener('keydown', e => this.onKeyDown(e));
-        document.addEventListener('click', () => {
-            this._fileMenu.remove();
-            this._menuVisible = false;
-        });
-        this._fileMenuButton.addEventListener('click', e => this.toggleMenu(e));
+    private addEventListeners() {
+        document.addEventListener('keydown', e => this.handleKeyDown(e));
+        this._menuBar.oninvoke(action => this.handleActions(action));
         this._editor.addEventListener('change', () => this._previewCanvas.update());
     }
 
-    private _menuVisible: boolean = true;
-    private toggleMenu(event: Event) {
-        this._menuVisible = !this._menuVisible;
-        
-        if (!this._menuVisible)
-        {
-            this._fileMenu.remove();
-            return;
-        }
-        
-        event.stopPropagation();
-        document.body.append(this._fileMenu);
-    }
-
-    onKeyDown(event: KeyboardEvent) {
+    private handleKeyDown(event: KeyboardEvent) {
         const control = event.ctrlKey || event.metaKey;
 
         if (control && (event.code == 'KeyO' || event.code == 'KeyS'))
@@ -111,6 +60,20 @@ class SilhouetteStudioTool {
                     this._project.save();
                     break;
             }
+        }
+    }
+
+    private handleActions(action: string) {
+        switch(action) {
+            case 'open':
+                this.openProject();
+                break;
+            case 'save':
+                this._project.save();
+                break;
+            case 'export':
+                this.exportProject();
+                break;
         }
     }
 
@@ -147,9 +110,7 @@ class SilhouetteStudioTool {
         const header = document.getElementsByTagName('header')[0];
         const propertiesSection = document.getElementById('properties_section') as HTMLDivElement;
         const previewSection = document.getElementById('preview_section') as HTMLDivElement;
-        const fileButton = document.getElementById('file_menu_button') as Button;
 
-        designUnit.setValueFor(fileButton, 2.5);
         fillColor.setValueFor(header, neutralLayer1);
         fillColor.setValueFor(propertiesSection, neutralLayer3);
         fillColor.setValueFor(previewSection, neutralLayer2);

@@ -61,9 +61,9 @@ export class ProjectCanvas {
         
         for (let row = 0; row < numRows; row++) {
             for (let column = 0; column < numColumns; column++) {
-            const x = spacingX + (column * (rectangleWidth + spacingX));
-            const y = spacingY + (row * (rectangleHeight + spacingY));
-            result.push({x, y});
+                const x = spacingX + (column * (rectangleWidth + spacingX));
+                const y = spacingY + (row * (rectangleHeight + spacingY));
+                result.push({x, y});
             }
         }
         
