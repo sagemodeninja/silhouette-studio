@@ -7,7 +7,8 @@ import {
     StandardLuminance,
     neutralLayer2,
     fillColor,
-    fluentAnchor
+    fluentAnchor,
+    neutralLayer3
 } from '@fluentui/web-components';
 import { MenuBar } from './menu-bar';
 import { Project } from './project';
@@ -16,7 +17,8 @@ import { ProjectCanvas } from './project-canvas';
 import { FileHandler } from './file-handler';
 import { KeyboardEventHandler } from './keyboard-event-handler';
 
-baseLayerLuminance.withDefault(StandardLuminance.DarkMode);
+const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+baseLayerLuminance.withDefault(prefersDarkMode ? StandardLuminance.DarkMode : StandardLuminance.LightMode);
 
 provideFluentDesignSystem()
     .register(
@@ -103,9 +105,13 @@ class SilhouetteStudioTool {
     }
 
     private setDesignTokens() {
+        const header = document.querySelector('header');
         const propertiesSection = document.getElementById('properties_section') as HTMLDivElement;
+        const footer = document.querySelector('footer');
 
-        fillColor.setValueFor(propertiesSection, neutralLayer2);
+        fillColor.setValueFor(header, neutralLayer2);
+        fillColor.setValueFor(propertiesSection, neutralLayer3);
+        // fillColor.setValueFor(footer, neutralLayer3);
     }
 }
 

@@ -64,6 +64,9 @@ export class ProjectEditor {
         this._pageOrientationSelect.value = pageSetup.orientation.toString();
         this._resolutionInput.valueAsNumber = pageSetup.pixelPerInch;
         this._showCutBorderCheck.checked = properties.showCutBorder;
+
+        this.toggleInputs();
+        project.changeTracker.subscribe(['source'], () => this.toggleInputs());
         
         this._loaded = true;
     }
@@ -100,5 +103,13 @@ export class ProjectEditor {
         this._project.pageSetup.pixelPerInch = this._resolutionInput.valueAsNumber;
 
         this._project.changeTracker.notify(property);
+    }
+
+    private toggleInputs() {
+        const disabled = this._project.source == null;
+
+        this._imageWidthInput.disabled = disabled;
+        this._imageHeightInput.disabled = disabled;
+        this._minSpaceInput.disabled = disabled;
     }
 }

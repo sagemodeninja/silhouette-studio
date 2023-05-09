@@ -1,51 +1,64 @@
 :root {
     --header-height: 30px;
     --footer-height: 30px;
+    --kbd-background-color: rgba(221, 221, 221, 0.4);
+    --kbd-border-bottom-color: rgba(68, 68, 68, 0.6);
+    --kbd-box-shadow-color: rgba(0, 0, 0, 0.36);
+    --kbd-color: #555555;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --kbd-background-color: rgba(128, 128, 128, 0.17);
+        --kbd-border-bottom-color: rgba(68, 68, 68, 0.6);
+        --kbd-box-shadow-color: rgba(0, 0, 0, 0.16);
+        --kbd-color: #cccccc;
+    }
 }
 
 body {
-    font-family: 'Segoe UI Variable';
-    height: 100vh;
     margin: 0;
 }
 
 #app {
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
+    font-family: 'Segoe UI Variable';
+    height: 100vh;
+    position: relative;
     width: 100%;
 }
 
 header,
-footer,
-.sections {
-    background-color: var(--fill-color);
-}
-
-header,
-#container,
+.sections,
 footer {
-    box-sizing: border-box;
-    display: flex;
-    width: 100%;
+    background-color: var(--fill-color);
 }
 
 header,
 footer {
     align-items: center;
-    justify-content: space-between;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     padding: 0 15px;
+    width: 100%;
+}
+
+header div:last-child,
+footer div:last-child {
+    text-align: right;
 }
 
 header {
-    border-bottom: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-layer-rest);
+    border-bottom: solid 1px var(--neutral-stroke-layer-rest);
     height: var(--header-height);
 }
 
 #container {
+    display: flex;
     height: calc(100% - (var(--header-height) + var(--footer-height)));
     position: relative;
+    width: 100%;
 }
 
 footer {
@@ -58,16 +71,22 @@ footer {
     display: flex;
 }
 
+#title_bar,
+#credits {
+    text-align: center;
+}
+
 #project_title::after {
-    content: '—';
+    content: ' —';
 }
 
 #project_title.unsaved {
+    font-variation-settings: 'wght' 600, 'opsz' 20;
     font-style: italic;
 }
 
 #project_title.unsaved::after {
-    content: '*—';
+    content: '* —';
 }
 
 .no-project #project_title {
@@ -96,6 +115,7 @@ footer {
     display: grid;
     gap: 15px;
     grid-template-columns: 1fr 1fr;
+    color-scheme: light;
 }
 
 .keyboard-shortcuts
@@ -109,11 +129,11 @@ footer {
 
 .keyboard-shortcuts
 kbd {
-    background-color: rgba(128, 128, 128, 0.17);
-    border-bottom: solid 1px rgba(68, 68, 68, 0.6);
+    background-color: var(--kbd-background-color);
+    border-bottom: solid 1px var(--kbd-border-bottom-color);
     border-radius: 3px;
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.36);
-    color: #cccccc;
+    box-shadow: inset 0 -1px 0 var(--kbd-box-shadow-color);
+    color: var(--kbd-color);
     display: inline-block;
     font-family: inherit;
     font-size: 12px;
@@ -132,6 +152,10 @@ kbd {
     justify-content: center;
     overflow-y: auto;
     padding: 20px;
+}
+
+#preview_canvas {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 #properties_section {

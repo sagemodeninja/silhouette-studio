@@ -6,15 +6,15 @@ type ChangeTrackerNotificationSubscriber = {
 }
 
 /**
- * Represents a change tracker.
+ * Middleware for notifying and subscribing to change events.
  */
 export class ChangeTracker {
     private _subscribers: ChangeTrackerNotificationSubscriber[] = [];
 
     /**
-     * Notifies the tracker that a change has occurred.
+     * Notifies the tracker that an event has occurred.
      * 
-     * @param event The name of the property that was changed.
+     * @param event Identifier of the event.
      */
     public notify(event: string) {
         const targets = this._subscribers.filter(s => {

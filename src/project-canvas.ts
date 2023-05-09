@@ -16,8 +16,6 @@ export class ProjectCanvas {
     constructor() {
         this._canvas = document.getElementById('preview_canvas') as HTMLCanvasElement;
         this._context = this._canvas.getContext('2d');
-
-        this.setup();
     }
 
     public register(project: Project) {

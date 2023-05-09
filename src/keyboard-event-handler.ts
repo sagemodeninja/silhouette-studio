@@ -7,7 +7,7 @@ export class KeyboardEventHandler {
      */
     static resolve(e: KeyboardEvent): string {
         // New
-        if ((e.ctrlKey || e.metaKey) && e.altKey && e.code === 'KeyN')
+        if (e.ctrlKey && e.code === 'KeyN')
         {
             e.preventDefault();
             return 'new';

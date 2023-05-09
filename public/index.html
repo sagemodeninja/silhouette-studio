@@ -22,7 +22,7 @@
                     vertical-default-position="bottom">
                     <fluent-menu class="menu">
                         <fluent-menu-item data-action="open">Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
-                        <fluent-menu-item data-action="new">New Project <kbd slot="end">Ctrl+Alt+N</kbd></fluent-menu-item>
+                        <fluent-menu-item data-action="new">New Project <kbd slot="end">Ctrl+N</kbd></fluent-menu-item>
                         <fluent-divider></fluent-divider>
                         <fluent-menu-item data-action="save">Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
                         <fluent-menu-item data-action="export_as_image">Export to Image <kbd slot="end">Ctrl+Shift+S</kbd></fluent-menu-item>
@@ -53,7 +53,6 @@
                     <span class="label">Create new project</span>
                     <span>
                         <kbd>Ctrl</kbd>
-                        <kbd>Alt</kbd>
                         <kbd>N</kbd>
                     </span>
                 </div>
@@ -76,21 +75,21 @@
                         <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
                             <label>Width</label>
                             <div class="input-group">
-                                <fluent-number-field id="width_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
+                                <fluent-number-field id="width_input" class="input small" step="0.1" min="0.01"></fluent-number-field>
                                 <label>in</label>
                             </div>
                         </div>
                         <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
                             <label>Height</label>
                             <div class="input-group">
-                                <fluent-number-field id="height_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
+                                <fluent-number-field id="height_input" class="input small" step="0.1" min="0.01"></fluent-number-field>
                                 <label>in</label>
                             </div>
                         </div>
                         <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
                             <label>Min. Space</label>
                             <div class="input-group">
-                                <fluent-number-field id="min_space_input" step="0.1" value="0.1" min="0.1" class="input small"></fluent-number-field>
+                                <fluent-number-field id="min_space_input" class="input small" step="0.01" min="0.1"></fluent-number-field>
                                 <label>in</label>
                             </div>
                         </div>
@@ -136,7 +135,9 @@
                 👨‍💻 with ❤️ by 
                 <fluent-anchor href="https://github.com/sagemodeninja" target="_blank" appearance="hypertext">Gary Antier</fluent-anchor>
             </span>
-            <span>v0.1.0-beta</span>
+            <div>
+                <span>v0.1.0-beta</span>
+            </div>
         </footer>
     </div>
 </body>

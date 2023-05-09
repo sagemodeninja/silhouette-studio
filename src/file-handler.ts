@@ -21,7 +21,7 @@ export const imageFileOptions = {
  */
 export class FileHandler {
     public static async open(action: string) {
-        const options = action === 'open' ? projectFileOptions : imageFileOptions;
+        const options = action == 'open' ? projectFileOptions : imageFileOptions;
         const [handle] = await window.showOpenFilePicker(options);
 
         return handle;
