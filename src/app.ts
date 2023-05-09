@@ -107,11 +107,9 @@ class SilhouetteStudioTool {
     private setDesignTokens() {
         const header = document.querySelector('header');
         const propertiesSection = document.getElementById('properties_section') as HTMLDivElement;
-        const footer = document.querySelector('footer');
 
         fillColor.setValueFor(header, neutralLayer2);
         fillColor.setValueFor(propertiesSection, neutralLayer3);
-        // fillColor.setValueFor(footer, neutralLayer3);
     }
 }
 

@@ -27,18 +27,18 @@ export class KeyboardEventHandler {
             return 'import_image';
         }
 
-        // Save
-        if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS')
-        {
-            e.preventDefault();
-            return 'save';
-        }
-
         // Export as Image
         if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyS')
         {
             e.preventDefault();
             return 'export_as_image';
+        }
+
+        // Save
+        if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS')
+        {
+            e.preventDefault();
+            return 'save';
         }
     }
 }

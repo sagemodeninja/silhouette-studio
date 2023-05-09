@@ -2,6 +2,7 @@ import * as saveAs from 'file-saver';
 import { Rectangle } from './rectangle';
 import { Project } from './project';
 import { PageOrientation, PageSetup } from './page-setup';
+import { FileHandler } from './file-handler';
 
 const ZOOM_FACTOR = 0.5;
 const MM_IN_INCHES = 25.4;
@@ -29,9 +30,9 @@ export class ProjectCanvas {
         this.draw('load');
     }
 
-    public export() {
-        const dataURL = this._canvas.toDataURL();
-        saveAs(dataURL, `test-out.png`);
+    public async export() {
+        const file = this._canvas.toDataURL();
+        await FileHandler.save(null, file);
     }
 
     private setup() {
