@@ -55,6 +55,7 @@ export class MenuBar {
                 }
 
                 e.stopPropagation();
+                this._activeMenu?.remove();
                 this._activeMenu = menu;
                 document.body.append(menu);
             });

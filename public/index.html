@@ -7,104 +7,137 @@
     <title>Silhouette Studio Tool</title>
 </head>
 <body>
-    <header>
-        <fluent-button id="file_menu_button" class="menu-button" appearance="stealth">File</fluent-button>
-        <fluent-anchored-region
-            class="menu-region"
-            anchor="file_menu_button"
-            horizontal-positioning-mode="dynamic"
-            horizontal-default-position="right"
-            horizontal-inset="true"
-            vertical-positioning-mode="dynamic"
-            vertical-default-position="bottom">
-            <fluent-menu class="menu">
-                <fluent-menu-item data-action="open">Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
-                <fluent-menu-item data-action="import_image">Import Image <kbd slot="end">Ctrl+Shift+I</kbd></fluent-menu-item>
-                <fluent-divider></fluent-divider>
-                <fluent-menu-item data-action="save">Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
-                <fluent-menu-item data-action="export_as_image">Export to Image <kbd slot="end">Ctrl+Shift+E</kbd></fluent-menu-item>
-            </fluent-menu>
-        </fluent-anchored-region>
-        <div id="title_bar">
-            <span id="project_title" class="unsaved">New Project</span>
-            —
-            <span>Silhouette Studio Tool</span>
+    <div id="app" class="no-project">
+        <header>
+            <div id="menu_bar">
+                <fluent-button id="file_menu_button" class="menu-button" appearance="stealth">File</fluent-button>
+                <fluent-button id="edit_menu_button" class="menu-button" appearance="stealth">Edit</fluent-button>
+                <fluent-anchored-region
+                    class="menu-region"
+                    anchor="file_menu_button"
+                    horizontal-positioning-mode="dynamic"
+                    horizontal-default-position="right"
+                    horizontal-inset="true"
+                    vertical-positioning-mode="dynamic"
+                    vertical-default-position="bottom">
+                    <fluent-menu class="menu">
+                        <fluent-menu-item data-action="open">Open <kbd slot="end">Ctrl+O</kbd></fluent-menu-item>
+                        <fluent-menu-item data-action="new">New Project <kbd slot="end">Ctrl+Alt+N</kbd></fluent-menu-item>
+                        <fluent-divider></fluent-divider>
+                        <fluent-menu-item data-action="save">Save <kbd slot="end">Ctrl+S</kbd></fluent-menu-item>
+                        <fluent-menu-item data-action="export_as_image">Export to Image <kbd slot="end">Ctrl+Shift+S</kbd></fluent-menu-item>
+                    </fluent-menu>
+                </fluent-anchored-region>
+                <fluent-anchored-region
+                    class="menu-region"
+                    anchor="edit_menu_button"
+                    horizontal-positioning-mode="dynamic"
+                    horizontal-default-position="right"
+                    horizontal-inset="true"
+                    vertical-positioning-mode="dynamic"
+                    vertical-default-position="bottom">
+                    <fluent-menu class="menu">
+                        <fluent-menu-item data-action="import_image">Import Image <kbd slot="end">Ctrl+Shift+I</kbd></fluent-menu-item>
+                    </fluent-menu>
+                </fluent-anchored-region>
+            </div>
+            <div id="title_bar">
+                <span id="project_title" class="unsaved">Untitled</span>
+                <span>Silhouette Studio Tool</span>
+            </div>
+            <div></div>
+        </header>
+        <div id="container">
+            <div id="getting_started">
+                <div class="keyboard-shortcuts">
+                    <span class="label">Create new project</span>
+                    <span>
+                        <kbd>Ctrl</kbd>
+                        <kbd>Alt</kbd>
+                        <kbd>N</kbd>
+                    </span>
+                </div>
+                <div class="keyboard-shortcuts">
+                    <span class="label">Open a project</span>
+                    <span>
+                        <kbd>Ctrl</kbd>
+                        <kbd>O</kbd>
+                    </span>
+                </div>
+            </div>
+            <section id="preview_section" class="sections">
+                <canvas id="preview_canvas"></canvas>
+            </section>
+            <section id="properties_section" class="sections">
+                <fluent-accordion expand-mode="multi">
+                    <fluent-accordion-item expanded>
+                      <span slot="heading">Properties</span>
+                      <div class="properties-panel">
+                        <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
+                            <label>Width</label>
+                            <div class="input-group">
+                                <fluent-number-field id="width_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
+                                <label>in</label>
+                            </div>
+                        </div>
+                        <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
+                            <label>Height</label>
+                            <div class="input-group">
+                                <fluent-number-field id="height_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
+                                <label>in</label>
+                            </div>
+                        </div>
+                        <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
+                            <label>Min. Space</label>
+                            <div class="input-group">
+                                <fluent-number-field id="min_space_input" step="0.1" value="0.1" min="0.1" class="input small"></fluent-number-field>
+                                <label>in</label>
+                            </div>
+                        </div>
+                      </div>
+                    </fluent-accordion-item>
+                    <fluent-accordion-item expanded>
+                      <span slot="heading">Page Setup</span>
+                      <div class="properties-panel">
+                        <div class="input-group grid">
+                            <label>Size</label>
+                            <div>
+                                <fluent-select id="page_size_select" class="select medium"></fluent-select>
+                            </div>
+                        </div>
+                        <div class="input-group grid">
+                            <label>Orientation</label>
+                            <div>
+                                <fluent-select id="page_orientation_select" class="select medium">
+                                    <fluent-option value="0">Portrait</fluent-option>
+                                    <fluent-option value="1">Landscape</fluent-option>
+                                </fluent-select>
+                            </div>
+                        </div>
+                        <div class="input-group grid">
+                            <label>Print Resolution</label>
+                            <div class="input-group">
+                                <fluent-number-field id="resolution_input" step="100" value="300" min="72" class="input small"></fluent-number-field>
+                                <label>dpi</label>
+                            </div>
+                        </div>
+                        <fluent-divider></fluent-divider>
+                        <div class="input-group">
+                            <fluent-checkbox id="cut_border_check" checked>Show Cut Border</fluent-checkbox>
+                        </div>
+                      </div>
+                    </fluent-accordion-item>
+                </fluent-accordion>
+            </section>
         </div>
-        <div></div>
-    </header>
-    <div id="container">
-        <section id="preview_section" class="sections">
-            <canvas id="preview_canvas"></canvas>
-        </section>
-        <section id="properties_section" class="sections">
-            <fluent-accordion expand-mode="multi">
-                <fluent-accordion-item expanded>
-                  <span slot="heading">Properties</span>
-                  <div class="properties-panel">
-                    <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
-                        <label>Width</label>
-                        <div class="input-group">
-                            <fluent-number-field id="width_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
-                            <label>in</label>
-                        </div>
-                    </div>
-                    <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
-                        <label>Height</label>
-                        <div class="input-group">
-                            <fluent-number-field id="height_input" step="0.1" value="1.00" min="0.01" class="input small"></fluent-number-field>
-                            <label>in</label>
-                        </div>
-                    </div>
-                    <div class="input-group grid" style="grid-template-columns: 100px 1fr;">
-                        <label>Min. Space</label>
-                        <div class="input-group">
-                            <fluent-number-field id="min_space_input" step="0.1" value="0.1" min="0.1" class="input small"></fluent-number-field>
-                            <label>in</label>
-                        </div>
-                    </div>
-                  </div>
-                </fluent-accordion-item>
-                <fluent-accordion-item expanded>
-                  <span slot="heading">Page Setup</span>
-                  <div class="properties-panel">
-                    <div class="input-group grid">
-                        <label>Size</label>
-                        <div>
-                            <fluent-select id="page_size_select" class="select medium"></fluent-select>
-                        </div>
-                    </div>
-                    <div class="input-group grid">
-                        <label>Orientation</label>
-                        <div>
-                            <fluent-select id="page_orientation_select" class="select medium">
-                                <fluent-option value="0">Portrait</fluent-option>
-                                <fluent-option value="1">Landscape</fluent-option>
-                            </fluent-select>
-                        </div>
-                    </div>
-                    <div class="input-group grid">
-                        <label>Print Resolution</label>
-                        <div class="input-group">
-                            <fluent-number-field id="resolution_input" step="100" value="300" min="72" class="input small"></fluent-number-field>
-                            <label>dpi</label>
-                        </div>
-                    </div>
-                    <fluent-divider></fluent-divider>
-                    <div class="input-group">
-                        <fluent-checkbox id="cut_border_check" checked>Show Cut Border</fluent-checkbox>
-                    </div>
-                  </div>
-                </fluent-accordion-item>
-            </fluent-accordion>
-        </section>
+        <footer>
+            <div></div>
+            <span id="credits">
+                👨‍💻 with ❤️ by 
+                <fluent-anchor href="https://github.com/sagemodeninja" target="_blank" appearance="hypertext">Gary Antier</fluent-anchor>
+            </span>
+            <span>v0.1.0-beta</span>
+        </footer>
     </div>
-    <footer>
-        <div></div>
-        <span id="credits">
-            👨‍💻 with ❤️ by 
-            <fluent-anchor href="https://github.com/sagemodeninja" target="_blank" appearance="hypertext">Gary Antier</fluent-anchor>
-        </span>
-        <span>v0.1.0-beta</span>
-    </footer>
 </body>
 </html>

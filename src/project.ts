@@ -1,12 +1,15 @@
 import { Builder, Parser } from 'xml2js';
 import { Properties } from './properties';
 import { PageSetup } from './page-setup';
-import { imageFileOptions, projectFileOptions } from './file-options';
 import { ChangeTracker } from './change-tracker';
+import { projectFileOptions } from './file-handler';
 
 export class Project extends EventTarget {
     private _fileHandle: any;
-    private _local: boolean;
+
+    public changeTracker: ChangeTracker;
+    public local: boolean;
+    public saved: boolean;
 
     public title: string;
     /**
@@ -21,29 +24,82 @@ export class Project extends EventTarget {
      * Configurations for the working page or area.
      */
     public pageSetup: PageSetup;
-    
-    public changeTracker: ChangeTracker;
-    public saved: boolean;
 
-    constructor() {
+    constructor(local: boolean) {
         super();
 
+        this.title = 'Untitled';
+        this.properties = {
+            imageWidth: 1,
+            imageHeight: 1,
+            minSpacing: 0.1,
+            showCutBorder: true
+        };
         this.pageSetup = PageSetup.default;
         this.changeTracker = new ChangeTracker();
+
+        // States
+        this.local = local;
+        this.saved = local;
 
         this.addEventListeners();
     }
 
-    public async open(type: string) {
-        const options = type === 'project' ? projectFileOptions : imageFileOptions;
+    public static async open(handle: any): Promise<Project> {
+        const file = await handle.getFile();
+        const content = await file.text();
 
-        [this._fileHandle] = await window.showOpenFilePicker(options);
-        const ext = this._fileHandle.name.split('.').pop();
+        return new Promise((resolve, reject) => {
+            const options = {
+                explicitArray: false,
+                explicitRoot: false,
+            };
+            
+            new Parser(options).parseString(content, (error, result) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+    
+                const properties = result.properties;
+                const pageSetup = result.pageSetup;
+                const project = new Project(true);
+    
+                project.title = result.title;
+                project.source = result.source;
+                project.properties = {
+                    imageWidth: parseFloat(properties.imageWidth),
+                    imageHeight: parseFloat(properties.imageHeight),
+                    minSpacing: parseFloat(properties.minSpacing),
+                    showCutBorder: properties.showCutBorder,
+                };
+                project.pageSetup = new PageSetup(pageSetup.size);
+                project.pageSetup.orientation = pageSetup.orientation;
+                project.pageSetup.pixelPerInch = pageSetup.pixelPerInch;
 
-        if(ext == 'studio4')
-            this.parseSaveFile();
-        else
-            this.parseImage();
+                resolve(project);
+            });
+        });
+    }
+
+    /**
+     * Import image.
+     * 
+     * @param handle File handle used to retrieve image content.
+     */
+    public async import(handle: any) {
+        const file = await handle.getFile();
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            this.source = reader.result.toString();
+            this.saved = false;
+
+            this.changeTracker.notify('save_state');
+            this.changeTracker.notify('source');
+        }
+        
+        reader.readAsDataURL(file);
     }
 
     public async save() {
@@ -56,7 +112,7 @@ export class Project extends EventTarget {
             pageSetup: this.pageSetup
         };
 
-        if (!this._local)
+        if (!this.local)
             this._fileHandle = await window.showSaveFilePicker(projectFileOptions);
 
         const writable = await this._fileHandle.createWritable();
@@ -66,7 +122,7 @@ export class Project extends EventTarget {
         await writable.write(file)
         await writable.close();
         
-        this._local = true;
+        this.local = true;
         this.saved = true;
         this.changeTracker.notify('save_state');
     }
@@ -83,70 +139,6 @@ export class Project extends EventTarget {
             this.saved = false;
             this.changeTracker.notify('save_state');
         });
-    }
-
-    private async parseSaveFile() {
-        const file = await this._fileHandle.getFile();
-        const xml = await file.text();
-        const parser = new Parser({
-            explicitArray: false,
-            explicitRoot: false,
-        });
-
-        parser.parseString(xml, (err, result) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-
-            const properties = result.properties;
-            const pageSetup = result.pageSetup;
-
-            this.title = result.title;
-            this.source = result.source;
-            this.properties = {
-                imageWidth: parseFloat(properties.imageWidth),
-                imageHeight: parseFloat(properties.imageHeight),
-                minSpacing: parseFloat(properties.minSpacing),
-                showCutBorder: properties.showCutBorder,
-            };
-            this.pageSetup = new PageSetup(pageSetup.size);
-            this.pageSetup.orientation = pageSetup.orientation;
-            this.pageSetup.pixelPerInch = pageSetup.pixelPerInch;
-
-            this._local = true;
-            this.saved = true;
-            this.changeTracker.notify('save_state');
-            this.loaded();
-        });
-    }
-
-    private async parseImage() {
-        const file = await this._fileHandle.getFile();
-        const reader = new FileReader();
-
-        reader.onload = () => {
-            this.title = this._fileHandle.name.split('.')[0];
-            this.source = reader.result.toString();
-            this.properties = {
-                imageWidth: 1,
-                imageHeight: 1,
-                minSpacing: 0.1,
-                showCutBorder: true
-            };
-
-            this._local = false;
-            this.saved = false;
-            this.changeTracker.notify('save_state');
-            this.loaded();
-        }
-        
-        reader.readAsDataURL(file);
-    }
-
-    private loaded() {
-        const event = new Event('load');
-        this.dispatchEvent(event);
     }
 }
 

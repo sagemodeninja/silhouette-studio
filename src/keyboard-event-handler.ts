@@ -6,6 +6,13 @@ export class KeyboardEventHandler {
      * @returns Name of resolved action or `undefined`.
      */
     static resolve(e: KeyboardEvent): string {
+        // New
+        if ((e.ctrlKey || e.metaKey) && e.altKey && e.code === 'KeyN')
+        {
+            e.preventDefault();
+            return 'new';
+        }
+
         // Open
         if ((e.ctrlKey || e.metaKey) && e.code === 'KeyO')
         {
@@ -28,7 +35,7 @@ export class KeyboardEventHandler {
         }
 
         // Export as Image
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyE')
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyS')
         {
             e.preventDefault();
             return 'export_as_image';

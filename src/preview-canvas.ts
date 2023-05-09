@@ -24,7 +24,7 @@ export class ProjectCanvas {
         this._project = project;
         this._image = null;
         this._project.changeTracker.subscribe(p => this.update(p));
-        this.update('source');
+        this.update('load');
     }
 
     public export() {
@@ -75,10 +75,13 @@ export class ProjectCanvas {
         if (!this._project)
             return;
 
-        if (property === 'page_setup')
+        if (property === 'page_setup' || property === 'load')
             this.setup();
         else
             this.clear();
+
+        if (property === 'save_state')
+            return;
 
         const workArea = this._workArea;
         const properties = this._project.properties;
@@ -92,7 +95,7 @@ export class ProjectCanvas {
         
         const rectangles = this.distributeRectangles(clientWidth, clientHeight, width, height, minumumSpace);
 
-        if (!this._image)
+        if (!this._image || property === 'source')
         {
             this._image = new Image();
             this._image.src = this._project.source;
