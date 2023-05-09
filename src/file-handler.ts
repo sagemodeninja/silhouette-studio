@@ -26,6 +26,19 @@ export class FileHandler {
 
         return handle;
     }
+
+    public static async save(handle: any, file: any) {
+        if (!handle) {
+            handle = await window.showSaveFilePicker(projectFileOptions);
+        }
+
+        const writable = await handle.createWritable();
+
+        await writable.write(file);
+        await writable.close();
+
+        return handle;
+    }
 }
 
 // TODO: Remove if official support comes.

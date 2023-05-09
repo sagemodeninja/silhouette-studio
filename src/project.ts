@@ -2,15 +2,18 @@ import { Builder, Parser } from 'xml2js';
 import { Properties } from './properties';
 import { PageSetup } from './page-setup';
 import { ChangeTracker } from './change-tracker';
-import { projectFileOptions } from './file-handler';
+import { FileHandler } from './file-handler';
 
-export class Project extends EventTarget {
+export class Project {
     private _fileHandle: any;
 
     public changeTracker: ChangeTracker;
     public local: boolean;
     public saved: boolean;
 
+    /**
+     * Project title
+     */
     public title: string;
     /**
      * The media source.
@@ -25,22 +28,18 @@ export class Project extends EventTarget {
      */
     public pageSetup: PageSetup;
 
-    constructor(local: boolean) {
-        super();
-
+    constructor(handle?: any) {
         this.title = 'Untitled';
-        this.properties = {
-            imageWidth: 1,
-            imageHeight: 1,
-            minSpacing: 0.1,
-            showCutBorder: true
-        };
+        this.source = null;
+        this.properties = Properties.default;
         this.pageSetup = PageSetup.default;
         this.changeTracker = new ChangeTracker();
 
+        // TODO: Refactor?
         // States
-        this.local = local;
-        this.saved = local;
+        this._fileHandle = handle;
+        this.local = handle != null;
+        this.saved = this.local;
 
         this.addEventListeners();
     }
@@ -63,7 +62,7 @@ export class Project extends EventTarget {
     
                 const properties = result.properties;
                 const pageSetup = result.pageSetup;
-                const project = new Project(true);
+                const project = new Project(handle);
     
                 project.title = result.title;
                 project.source = result.source;
@@ -71,11 +70,11 @@ export class Project extends EventTarget {
                     imageWidth: parseFloat(properties.imageWidth),
                     imageHeight: parseFloat(properties.imageHeight),
                     minSpacing: parseFloat(properties.minSpacing),
-                    showCutBorder: properties.showCutBorder,
+                    showCutBorder: properties.showCutBorder == 'true',
                 };
                 project.pageSetup = new PageSetup(pageSetup.size);
-                project.pageSetup.orientation = pageSetup.orientation;
-                project.pageSetup.pixelPerInch = pageSetup.pixelPerInch;
+                project.pageSetup.orientation = parseFloat(pageSetup.orientation);
+                project.pageSetup.pixelPerInch = parseFloat(pageSetup.pixelPerInch);
 
                 resolve(project);
             });
@@ -105,6 +104,7 @@ export class Project extends EventTarget {
     public async save() {
         const options = {rootName:'project'};
         const builder = new Builder(options);
+        
         const content = {
             title: this.title,
             source: this.source,
@@ -112,15 +112,10 @@ export class Project extends EventTarget {
             pageSetup: this.pageSetup
         };
 
-        if (!this.local)
-            this._fileHandle = await window.showSaveFilePicker(projectFileOptions);
-
-        const writable = await this._fileHandle.createWritable();
         const xml = builder.buildObject(content);
         const file = new Blob([xml], {type: 'text/xml;charset=utf-8'});
 
-        await writable.write(file)
-        await writable.close();
+        this._fileHandle = await FileHandler.save(this._fileHandle, file);
         
         this.local = true;
         this.saved = true;
@@ -132,7 +127,7 @@ export class Project extends EventTarget {
     }
 
     private addEventListeners() {
-        this.changeTracker.subscribe(prop => {
+        this.changeTracker.subscribe(['*'], prop => {
             if (prop === 'save_state')
                 return;
 
@@ -140,11 +135,4 @@ export class Project extends EventTarget {
             this.changeTracker.notify('save_state');
         });
     }
-}
-
-// TODO: Remove if official support comes.
-declare const window: Window &
-typeof globalThis & {
-    showOpenFilePicker: any,
-    showSaveFilePicker: any,
 }

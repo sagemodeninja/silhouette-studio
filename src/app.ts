@@ -1,3 +1,6 @@
+import '/public/fonts/segoe-ui-variable/segoe-ui-variable.css';
+import '/public/css/app.css';
+
 import {
     provideFluentDesignSystem,
     baseLayerLuminance,
@@ -9,11 +12,9 @@ import {
 import { MenuBar } from './menu-bar';
 import { Project } from './project';
 import { ProjectEditor } from './project-editor';
-import { ProjectCanvas } from './preview-canvas';
-import { KeyboardEventHandler } from './keyboard-event-handler';
-import '/public/fonts/segoe-ui-variable/segoe-ui-variable.css';
-import '/public/css/app.css';
+import { ProjectCanvas } from './project-canvas';
 import { FileHandler } from './file-handler';
+import { KeyboardEventHandler } from './keyboard-event-handler';
 
 baseLayerLuminance.withDefault(StandardLuminance.DarkMode);
 
@@ -23,25 +24,24 @@ provideFluentDesignSystem()
     );
 
 class SilhouetteStudioTool {
-    public context: CanvasRenderingContext2D;
-    public propertiesSection: HTMLDivElement;
-
-    private _project: Project;
-    private _menuBar: MenuBar;
-    private _editor: ProjectEditor;
-    private _previewCanvas: ProjectCanvas;
     private _app: HTMLDivElement;
-    private _projectTitle: HTMLSpanElement;
+    private _title: HTMLSpanElement;
+
+    private _menuBar: MenuBar;
+    private _project: Project;
+    private _editor: ProjectEditor;
+    private _canvas: ProjectCanvas;
 
     constructor() {
+        this._app = document.getElementById('app') as HTMLDivElement;
+        this._title = document.getElementById('project_title');
+
         this._menuBar = new MenuBar();
         this._editor = new ProjectEditor();
-        this._previewCanvas = new ProjectCanvas();
-        this._app = document.getElementById('app') as HTMLDivElement;
-        this._projectTitle = document.getElementById('project_title');
+        this._canvas = new ProjectCanvas();
 
-        this.setDesignTokens();
         this.addEventListeners();
+        this.setDesignTokens();
     }
 
     private addEventListeners() {
@@ -52,28 +52,27 @@ class SilhouetteStudioTool {
     private handleKeyboard(e: KeyboardEvent) {
         const resolvedAction = KeyboardEventHandler.resolve(e);
 
-        if (resolvedAction && !(resolvedAction === 'import_image' && !this._project))
-            this.handleActions(resolvedAction);
+        if (resolvedAction == 'import_image' && !this._project)
+            return;
+
+        this.handleActions(resolvedAction);
     }
 
     private handleActions(action: string) {
-        switch(action) {
-            case 'open':
-            case 'import_image':
-                this.openFile(action);
-                break;
-            case 'new':
-                this._project = new Project(false);
-                this._project.changeTracker.subscribe(p => this.updateTitle(p));
-                this.loadProject();
-                break;
-            case 'save':
-                this._project.save();
-                break;
-            case 'export_as_image':
-                this._previewCanvas.export();
-                break;
+        if (action == 'new')
+        {
+            this._project = new Project();
+            this.loadProject();
         }
+
+        if (action == 'open' || action == 'import_image')
+            this.openFile(action);
+
+        if (action == 'save')
+            this._project.save();
+
+        if (action == 'export_as_image')
+            this._canvas.export();
     }
 
     private async openFile(action: string) {
@@ -86,24 +85,21 @@ class SilhouetteStudioTool {
         }
         
         this._project = await Project.open(handle);
-        this._project.changeTracker.subscribe(p => this.updateTitle(p));
         this.loadProject();
     }
 
     private loadProject() {
-        this._app.classList.toggle('no-project', false);
         this._editor.register(this._project);
-        this._previewCanvas.register(this._project);
-
-        this.updateTitle();
+        this._canvas.register(this._project);
+        
+        this._project.changeTracker.subscribe(['save_state'], () => this.updateState());
+        this.updateState();
     }
 
-    private updateTitle(state?: string) {
-        if (state && !(state === 'title' || state === 'save_state'))
-            return;
-
-        this._projectTitle.innerText = this._project.title;
-        this._projectTitle.classList.toggle('unsaved', !this._project.saved);
+    private updateState() {
+        this._title.innerText = this._project.title;
+        this._title.classList.toggle('unsaved', !this._project.saved);
+        this._app.classList.toggle('no-project', !this._project);
     }
 
     private setDesignTokens() {

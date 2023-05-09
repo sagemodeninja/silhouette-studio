@@ -23,8 +23,12 @@ export class ProjectCanvas {
     public register(project: Project) {
         this._project = project;
         this._image = null;
-        this._project.changeTracker.subscribe(p => this.update(p));
-        this.update('load');
+
+        // React to changes in the project
+        const events = ['source', 'properties', 'page_setup'];
+        this._project.changeTracker.subscribe(events, e => this.draw(e));
+
+        this.draw('load');
     }
 
     public export() {
@@ -36,6 +40,52 @@ export class ProjectCanvas {
         this.setupCanvas();
         this.calculateWorkArea();
         this.clear();
+    }
+    
+    private draw(event: string) {
+        if (event == 'page_setup' || event == 'load')
+            this.setup();
+        else
+            this.clear();
+
+        if (!this._project.source)
+            return;
+
+        const workArea = this._workArea;
+        const properties = this._project.properties;
+        const pageSetup = this._project.pageSetup;
+
+        const clientWidth = workArea.width;
+        const clientHeight = workArea.height;
+
+        const width = Math.round(properties.imageWidth * pageSetup.pixelPerInch);
+        const height = Math.round(properties.imageHeight * pageSetup.pixelPerInch);
+        const minumumSpace = properties.minSpacing * pageSetup.pixelPerInch;
+        
+        const rectangles = this.distributeRectangles(clientWidth, clientHeight, width, height, minumumSpace);
+
+        if (!this._image || event === 'source')
+        {
+            this._image = new Image();
+
+            this._image.src = this._project.source;
+
+            this._image.onload = () => {
+                rectangles.forEach(rect => {
+                    const x = workArea.left + rect.x;
+                    const y = workArea.top + rect.y;
+                    this._context.drawImage(this._image, x, y, width, height);
+                });
+            }
+
+            return;
+        }
+    
+        rectangles.forEach(rect => {
+            const x = workArea.left + rect.x;
+            const y = workArea.top + rect.y;
+            this._context.drawImage(this._image, x, y, width, height);
+        });
     }
 
     private setupCanvas() {
@@ -69,53 +119,6 @@ export class ProjectCanvas {
         this._context.fillStyle = '#fff';
         this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
         this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-    }
-
-    private update(property: string) {
-        if (!this._project)
-            return;
-
-        if (property === 'page_setup' || property === 'load')
-            this.setup();
-        else
-            this.clear();
-
-        if (property === 'save_state')
-            return;
-
-        const workArea = this._workArea;
-        const properties = this._project.properties;
-        const pageSetup = this._project.pageSetup;
-
-        const clientWidth = workArea.width;
-        const clientHeight = workArea.height;
-        const width = Math.round(properties.imageWidth * pageSetup.pixelPerInch);
-        const height = Math.round(properties.imageHeight * pageSetup.pixelPerInch);
-        const minumumSpace = properties.minSpacing * pageSetup.pixelPerInch;
-        
-        const rectangles = this.distributeRectangles(clientWidth, clientHeight, width, height, minumumSpace);
-
-        if (!this._image || property === 'source')
-        {
-            this._image = new Image();
-            this._image.src = this._project.source;
-
-            this._image.onload = () => {
-                rectangles.forEach(rect => {
-                    const x = workArea.left + rect.x;
-                    const y = workArea.top + rect.y;
-                    this._context.drawImage(this._image, x, y, width, height);
-                });
-            }
-
-            return;
-        }
-    
-        rectangles.forEach(rect => {
-            const x = workArea.left + rect.x;
-            const y = workArea.top + rect.y;
-            this._context.drawImage(this._image, x, y, width, height);
-        });
     }
 
     private distributeRectangles(containerWidth: number, containerHeight: number, rectangleWidth: number, rectangleHeight: number, minSpacing: number): {x: number, y: number}[] {

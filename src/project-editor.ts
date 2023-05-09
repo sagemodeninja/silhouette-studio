@@ -63,6 +63,7 @@ export class ProjectEditor {
         this._pageSizeSelect.value = pageSetup.size;
         this._pageOrientationSelect.value = pageSetup.orientation.toString();
         this._resolutionInput.valueAsNumber = pageSetup.pixelPerInch;
+        this._showCutBorderCheck.checked = properties.showCutBorder;
         
         this._loaded = true;
     }
