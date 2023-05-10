@@ -12,6 +12,7 @@
     "@fluentui/web-components": "^2.5.14",
     "@microsoft/fast-element": "^1.12.0",
     "css-loader": "^6.7.3",
+    "css-minimizer-webpack-plugin": "^5.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.1",
     "json-loader": "^0.5.7",
